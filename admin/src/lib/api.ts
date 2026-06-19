@@ -121,11 +121,11 @@ export const newsCategoriesApi = {
 export const contentCategoriesApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/content-categories', { params }),
-  get: (id: number) => apiGet<{ data: unknown }>(`/admin/content-categories/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/content-categories/${id}`),
   create: (data: unknown) => apiPost<{ data: unknown }>('/admin/content-categories', data),
-  update: (id: number, data: unknown) =>
+  update: (id: string, data: unknown) =>
     apiPut<{ data: unknown }>(`/admin/content-categories/${id}`, data),
-  delete: (id: number) => apiDelete(`/admin/content-categories/${id}`),
+  delete: (id: string) => apiDelete(`/admin/content-categories/${id}`),
 }
 
 // ─── Tags ─────────────────────────────────────────────────────────────────────

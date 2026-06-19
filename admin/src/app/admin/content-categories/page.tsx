@@ -44,8 +44,8 @@ const emptyForm = (): FormState => ({
 export default function ContentCategoriesPage() {
   const [page, setPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
-  const [editingId, setEditingId] = useState<number | null>(null)
-  const [deleteId, setDeleteId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
   const [form, setForm] = useState<FormState>(emptyForm())
 
   const categoriesQuery = useContentCategories({ page })
@@ -131,9 +131,9 @@ export default function ContentCategoriesPage() {
       ),
     },
     {
-      key: "contents_count",
+      key: "id",
       label: "Contents",
-      render: (item) => <span className="text-zinc-600 dark:text-zinc-400">{item.contents_count ?? 0}</span>,
+      render: () => <span className="text-zinc-400">—</span>,
     },
     {
       key: "is_active",

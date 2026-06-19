@@ -14,6 +14,8 @@ import {
   Upload,
   Eye,
   BarChart4,
+  RefreshCw,
+  AlertCircle,
 } from "lucide-react"
 import {
   BarChart,
@@ -33,6 +35,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 
 interface StatCard {
   label: string
@@ -48,7 +51,7 @@ const statCards: StatCard[] = [
   { label: "Total Users", key: "total_users", icon: Users, color: "text-violet-600", bg: "bg-violet-50" },
   { label: "Total Media", key: "total_media", icon: Image, color: "text-amber-600", bg: "bg-amber-50" },
   { label: "Total Downloads", key: "total_downloads", icon: Download, color: "text-rose-600", bg: "bg-rose-50" },
-  { label: "Total Contacts", key: "total_contacts", icon: Mail, color: "text-cyan-600", bg: "bg-cyan-50" },
+  { label: "Unread Contacts", key: "unread_contacts", icon: Mail, color: "text-cyan-600", bg: "bg-cyan-50" },
 ]
 
 const quickActions = [
@@ -72,14 +75,16 @@ function ActivityBadge({ action }: { action: string }) {
 export default function AdminDashboard() {
   const { user } = useAuth()
 
-  const { data: statsResponse, isLoading } = useQuery({
+  const { data: statsResponse, isLoading, isError, error, refetch, isRefetching } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: () => api.get<DashboardStats>("/admin/dashboard/stats"),
+    retry: 2,
+    staleTime: 60_000,
   })
 
   const stats = statsResponse?.data
 
-  const [monthlyData] = useState(() => {
+  const monthlyData = useMemo(() => {
     const months = []
     const now = new Date()
     for (let i = 5; i >= 0; i--) {
@@ -91,21 +96,46 @@ export default function AdminDashboard() {
       })
     }
     return months
-  })
+  }, [])
 
   const activities: ActivityLog[] = useMemo(() => {
     if (!stats?.recent_activities) return []
     return stats.recent_activities.slice(0, 10)
   }, [stats])
 
+  if (isError) {
+    toast.error("Failed to load dashboard data", { id: "dashboard-error" })
+  }
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-          Welcome back, {user?.name || "Admin"}
-        </h1>
-        <p className="mt-1 text-sm text-zinc-500">Here&apos;s what&apos;s happening with your site today.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+            Welcome back, {user?.name || "Admin"}
+          </h1>
+          <p className="mt-1 text-sm text-zinc-500">Here&apos;s what&apos;s happening with your site today.</p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => refetch()}
+          disabled={isRefetching}
+        >
+          <RefreshCw size={14} className={cn(isRefetching && "animate-spin")} />
+          Refresh
+        </Button>
       </div>
+
+      {isError && (
+        <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
+          <AlertCircle size={16} />
+          <span className="flex-1">Could not load dashboard data. The API may be unavailable.</span>
+          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isRefetching}>
+            Retry
+          </Button>
+        </div>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {statCards.map((card) => {
@@ -219,7 +249,7 @@ export default function AdminDashboard() {
                         <ActivityBadge action={activity.action} />
                       </td>
                       <td className="whitespace-nowrap px-4 py-3 text-sm capitalize text-zinc-600 dark:text-zinc-400">
-                        {(activity.subject_type ?? '').replace(/_/g, " ")}
+                        {(activity.subject_type ?? "").replace(/_/g, " ")}
                       </td>
                       <td className="max-w-xs truncate px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
                         {activity.description}

@@ -35,9 +35,9 @@ export default function NewsListPage() {
 
   const { data: newsRes, isLoading } = useNewsList({
     page,
-    search,
-    status,
-    category_id: categoryId ? Number(categoryId) : undefined,
+    ...(search ? { search } : {}),
+    ...(status ? { status } : {}),
+    ...(categoryId ? { category_id: Number(categoryId) } : {}),
   })
   const { data: categoriesRes } = useNewsCategories({ per_page: 100 })
   const deleteNews = useDeleteNewsItem()

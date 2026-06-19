@@ -13,7 +13,7 @@ export function useContentCategories(params?: Record<string, unknown>) {
   })
 }
 
-export function useContentCategory(id: number) {
+export function useContentCategory(id: string) {
   return useQuery({
     queryKey: ['content-category', id],
     queryFn: async () => {
@@ -36,7 +36,7 @@ export function useCreateContentCategory() {
 export function useUpdateContentCategory() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: unknown }) => contentCategoriesApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: unknown }) => contentCategoriesApi.update(id, data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['content-categories'] }); toast.success('Category updated') },
     onError: (err: { response?: { data?: { message?: string } } }) => { toast.error(err.response?.data?.message || 'Failed') },
   })
@@ -45,7 +45,7 @@ export function useUpdateContentCategory() {
 export function useDeleteContentCategory() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => contentCategoriesApi.delete(id),
+    mutationFn: (id: string) => contentCategoriesApi.delete(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['content-categories'] }); toast.success('Category deleted') },
     onError: () => toast.error('Failed to delete'),
   })

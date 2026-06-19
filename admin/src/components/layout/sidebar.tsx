@@ -31,6 +31,7 @@ import {
   PanelLeftClose,
   PanelLeft,
   X,
+  ExternalLink,
 } from "lucide-react"
 
 interface NavItem {
@@ -274,14 +275,59 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         })}
       </nav>
 
-      <div className="hidden shrink-0 border-t border-zinc-800 p-3 lg:block">
-        <button
-          onClick={toggleCollapsed}
-          className="flex w-full items-center justify-center rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? <PanelLeft size={20} /> : <PanelLeftClose size={20} />}
-        </button>
+      <div className="border-t border-zinc-800 p-3">
+        {collapsed ? (
+          <div className="space-y-1">
+            <a
+              href={process.env.NEXT_PUBLIC_MAIN_SITE_URL || 'http://localhost:3007'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+              title="View Site"
+            >
+              <ExternalLink size={20} />
+            </a>
+            <a
+              href={process.env.NEXT_PUBLIC_DEVELOPER_PORTAL_URL || 'http://localhost:3006'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+              title="Developer Portal"
+            >
+              <Code size={20} />
+            </a>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            <a
+              href={process.env.NEXT_PUBLIC_MAIN_SITE_URL || 'http://localhost:3007'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+            >
+              <ExternalLink size={16} />
+              View Site
+            </a>
+            <a
+              href={process.env.NEXT_PUBLIC_DEVELOPER_PORTAL_URL || 'http://localhost:3006'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+            >
+              <Code size={16} />
+              Developer Portal
+            </a>
+          </div>
+        )}
+        <div className="mt-2">
+          <button
+            onClick={toggleCollapsed}
+            className="flex w-full items-center justify-center rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <PanelLeft size={20} /> : <PanelLeftClose size={20} />}
+          </button>
+        </div>
       </div>
     </div>
   )

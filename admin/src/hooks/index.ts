@@ -35,11 +35,11 @@ export function useContents(params?: Record<string, unknown>) {
   })
 }
 
-export function useContent(id: number | string) {
+export function useContent(id: string | number) {
   return useQuery({
     queryKey: ['content', id],
     queryFn: async () => {
-      const res = await contentsApi.get(Number(id)) as { data: Content }
+      const res = await contentsApi.get(id) as { data: Content }
       return res.data
     },
     enabled: !!id,
@@ -63,7 +63,7 @@ export function useCreateContent() {
 export function useUpdateContent() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: unknown }) => contentsApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string | number; data: unknown }) => contentsApi.update(id, data),
     onSuccess: (res, { id }) => {
       qc.setQueryData(['content', id], (res as { data: Content }).data)
       qc.invalidateQueries({ queryKey: ['contents'] })
@@ -78,7 +78,7 @@ export function useUpdateContent() {
 export function useDeleteContent() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => contentsApi.delete(id),
+    mutationFn: (id: string | number) => contentsApi.delete(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['contents'] })
       toast.success('Content deleted')

@@ -40,8 +40,15 @@ export function useCreateNews() {
       qc.invalidateQueries({ queryKey: ['news'] })
       toast.success('News created successfully')
     },
-    onError: (err: { response?: { data?: { message?: string } } }) => {
-      toast.error(err.response?.data?.message || 'Failed to create news')
+    onError: (err: { response?: { data?: { message?: string; errors?: Record<string, string[]> } } }) => {
+      const data = err.response?.data
+      if (data?.errors) {
+        const firstField = Object.keys(data.errors)[0]
+        const firstMsg = data.errors[firstField][0]
+        toast.error(`${firstField}: ${firstMsg}`)
+      } else {
+        toast.error(data?.message || 'Failed to create news')
+      }
     },
   })
 }
@@ -55,8 +62,15 @@ export function useUpdateNews() {
       qc.invalidateQueries({ queryKey: ['news'] })
       toast.success('News updated successfully')
     },
-    onError: (err: { response?: { data?: { message?: string } } }) => {
-      toast.error(err.response?.data?.message || 'Failed to update news')
+    onError: (err: { response?: { data?: { message?: string; errors?: Record<string, string[]> } } }) => {
+      const data = err.response?.data
+      if (data?.errors) {
+        const firstField = Object.keys(data.errors)[0]
+        const firstMsg = data.errors[firstField][0]
+        toast.error(`${firstField}: ${firstMsg}`)
+      } else {
+        toast.error(data?.message || 'Failed to update news')
+      }
     },
   })
 }

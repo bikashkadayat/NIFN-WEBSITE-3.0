@@ -101,11 +101,13 @@ export default function NewNewsPage() {
         featured_image_id: featuredImageId,
         tag_names: tags,
         translations: [
-          { locale: "en", ...translations.en },
-          { locale: "ne", ...translations.ne },
+          { locale: "en", slug, ...translations.en },
+          { locale: "ne", slug, ...translations.ne },
         ],
       })
       router.push("/admin/news")
+    } catch {
+      // Error toast handled by useCreateNews.onError
     } finally {
       setSubmitting(false)
     }

@@ -23,7 +23,7 @@ const emptyLocale = () => ({ title: '', body: '', excerpt: '', seo_title: '', se
 export default function ContentEditPage() {
   const router = useRouter()
   const params = useParams()
-  const id = Number(params.id)
+  const id = params.id as string
   const { data: content, isLoading } = useContent(id)
   const updateContent = useUpdateContent()
   const [slug, setSlug] = useState('')

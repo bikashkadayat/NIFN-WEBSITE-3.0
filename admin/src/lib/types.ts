@@ -83,11 +83,10 @@ export interface Content {
 }
 
 export interface ContentCategory {
-  id: number
+  id: string
   slug: string
   sort_order: number
   is_active: boolean
-  contents_count?: number
   translations: Translation[]
   created_at: string
   updated_at: string

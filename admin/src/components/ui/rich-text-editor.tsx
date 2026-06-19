@@ -83,6 +83,7 @@ export function RichTextEditor({
 }: RichTextEditorProps) {
   const onChangeRef = useRef(onChange)
   useEffect(() => { onChangeRef.current = onChange }, [onChange])
+  const skipNextRef = useRef(false)
 
   const [showHeadingMenu, setShowHeadingMenu] = useState(false)
   const [showHtml, setShowHtml] = useState(false)
@@ -110,7 +111,9 @@ export function RichTextEditor({
       onUpdate: ({ editor }) => {
         const html = editor.getHTML()
         setHtmlValue(html)
-        onChangeRef.current(html)
+        if (!skipNextRef.current) {
+          onChangeRef.current(html)
+        }
       },
       editorProps: {
         attributes: {
@@ -121,6 +124,14 @@ export function RichTextEditor({
     },
     [],
   )
+
+  useEffect(() => {
+    if (editor && content && content !== editor.getHTML()) {
+      skipNextRef.current = true
+      editor.commands.setContent(content)
+      skipNextRef.current = false
+    }
+  }, [content, editor])
 
   const addLink = () => {
     if (!editor) return
