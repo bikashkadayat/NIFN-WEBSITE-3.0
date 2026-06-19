@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreContentRequest;
 use App\Http\Requests\Admin\UpdateContentRequest;
 use App\Models\Content;
+use App\Services\RevalidationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -46,6 +47,8 @@ class ContentController extends Controller
 
             return $content;
         });
+
+        RevalidationService::trigger($content->portal_type ?? 'website', $content->slug);
 
         return response()->json([
             'data'    => $content->load('translations'),
@@ -88,6 +91,8 @@ class ContentController extends Controller
             }
         });
 
+        RevalidationService::trigger($content->portal_type ?? 'website', $content->slug);
+
         return response()->json([
             'data'    => $content->fresh('translations'),
             'message' => 'Content updated successfully.',
@@ -96,7 +101,12 @@ class ContentController extends Controller
 
     public function destroy(string $id): JsonResponse
     {
-        Content::findOrFail($id)->delete();
+        $content = Content::findOrFail($id);
+        $slug = $content->slug;
+        $portalType = $content->portal_type;
+        $content->delete();
+
+        RevalidationService::trigger($portalType ?? 'website', $slug);
 
         return response()->json(['message' => 'Content deleted.']);
     }

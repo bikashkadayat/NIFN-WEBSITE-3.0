@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, Search, X, Globe, ChevronRight } from 'lucide-react'
+import { Menu, Search, X, Globe, ChevronRight, ExternalLink } from 'lucide-react'
 import clsx from 'clsx'
+
+const MAIN_SITE_URL = process.env.NEXT_PUBLIC_MAIN_SITE_URL || 'http://localhost:3007'
 
 interface NavbarProps {
   onSearchOpen?: () => void
@@ -93,6 +95,16 @@ export function Navbar({ onSearchOpen, onMenuToggle }: NavbarProps) {
               >
                 <Search className="w-5 h-5" />
               </button>
+
+              <a
+                href={MAIN_SITE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:flex items-center gap-1 px-3 py-1.5 text-sm text-gray-500 hover:text-cyan-700 transition-colors"
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span>Main Site</span>
+              </a>
 
               <a
                 href="https://github.com/nifn"

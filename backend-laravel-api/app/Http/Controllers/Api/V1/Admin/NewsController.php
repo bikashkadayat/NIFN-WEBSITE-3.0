@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreNewsRequest;
 use App\Http\Requests\Admin\UpdateNewsRequest;
 use App\Models\News;
 use App\Models\NewsTranslation;
+use App\Services\RevalidationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,7 @@ class NewsController extends Controller
             );
         }
 
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
@@ -64,6 +65,8 @@ class NewsController extends Controller
 
             return $news;
         });
+
+        RevalidationService::trigger('website', 'news');
 
         return response()->json([
             'data'    => $news->load(['translations', 'category', 'tags', 'featuredImage']),
@@ -124,6 +127,8 @@ class NewsController extends Controller
             }
         });
 
+        RevalidationService::trigger('website', 'news');
+
         return response()->json([
             'data'    => $news->fresh(['translations', 'category', 'tags', 'featuredImage']),
             'message' => 'News article updated successfully.',
@@ -133,6 +138,8 @@ class NewsController extends Controller
     public function destroy(string $id): JsonResponse
     {
         News::findOrFail($id)->delete();
+
+        RevalidationService::trigger('website', 'news');
 
         return response()->json(['message' => 'News article deleted.']);
     }

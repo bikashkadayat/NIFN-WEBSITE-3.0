@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreBannerRequest;
 use App\Models\Banner;
+use App\Services\RevalidationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -45,6 +46,8 @@ class BannerController extends Controller
 
             return $banner;
         });
+
+        RevalidationService::trigger('website', 'home-hero');
 
         return response()->json([
             'data'    => $banner->load('translations'),
@@ -87,6 +90,8 @@ class BannerController extends Controller
             }
         });
 
+        RevalidationService::trigger('website', 'home-hero');
+
         return response()->json([
             'data'    => $banner->fresh('translations'),
             'message' => 'Banner updated.',
@@ -96,6 +101,8 @@ class BannerController extends Controller
     public function destroy(string $id): JsonResponse
     {
         Banner::findOrFail($id)->delete();
+
+        RevalidationService::trigger('website', 'home-hero');
 
         return response()->json(['message' => 'Banner deleted.']);
     }

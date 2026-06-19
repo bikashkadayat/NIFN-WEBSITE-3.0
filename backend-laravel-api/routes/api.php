@@ -115,6 +115,7 @@ Route::prefix('v1/admin')->middleware('auth:sanctum')->group(function () {
     // Downloads
     Route::apiResource('downloads', Admin\DownloadController::class);
     Route::apiResource('download-categories', Admin\DownloadCategoryController::class);
+    Route::apiResource('content-categories', Admin\ContentCategoryController::class);
 
     // Popup notices
     Route::apiResource('popup-notices', Admin\PopupNoticeController::class);
@@ -164,42 +165,38 @@ Route::prefix('v1/admin')->middleware('auth:sanctum')->group(function () {
     // Activity logs (read-only)
     Route::get('activity-logs', [Admin\ActivityLogController::class, 'index']);
     Route::get('activity-logs/{id}', [Admin\ActivityLogController::class, 'show']);
-});
 
-// ─── Health check ─────────────────────────────────────────────────────────────
-Route::get('/health', function () {
-    return response()->json([
-        'status'    => 'ok',
-        'timestamp' => now()->toISOString(),
-        'version'   => '1.0.0',
-    ]);
-});
-
-// ─── Add dashboard stats inline ───────────────────────────────────────────────
-Route::middleware(['auth:sanctum'])->prefix('v1/admin')->group(function () {
+    // Dashboard stats
     Route::get('dashboard/stats', function () {
         $stats = [
-            'total_contents'  => \App\Models\Content::count(),
-            'total_news'      => \App\Models\News::where('status', 'published')->count(),
-            'total_users'     => \App\Models\User::count(),
-            'total_media'     => \DB::table('media')->count(),
-            'total_downloads' => \DB::table('downloads')->count(),
-            'total_contacts'  => \DB::table('contact_submissions')->count(),
+            'total_contents'     => \App\Models\Content::count(),
+            'total_news'         => \App\Models\News::where('is_published', true)->count(),
+            'total_users'        => \App\Models\User::count(),
+            'total_media'        => \DB::table('media')->count(),
+            'total_downloads'    => \DB::table('downloads')->count(),
+            'total_contacts'     => \DB::table('contact_submissions')->count(),
+            'total_galleries'    => \DB::table('galleries')->count(),
+            'total_subscribers'  => \DB::table('newsletter_subscribers')->where('is_active', true)->count(),
+            'unread_contacts'    => \DB::table('contact_submissions')->where('is_read', false)->count(),
             'recent_activities' => \DB::table('activity_logs')
-                ->orderBy('created_at', 'desc')
+                ->leftJoin('users', 'activity_logs.user_id', '=', 'users.id')
+                ->orderBy('activity_logs.created_at', 'desc')
                 ->limit(10)
+                ->select('activity_logs.*', 'users.name as user_name')
                 ->get()
                 ->map(fn($a) => [
                     'id'           => $a->id,
-                    'user_name'    => $a->causer_name ?? 'System',
-                    'action'       => $a->event ?? $a->action ?? 'updated',
-                    'subject_type' => $a->subject_type ?? $a->loggable_type ?? '',
+                    'user_name'    => $a->user_name ?? 'System',
+                    'action'       => $a->action ?? 'updated',
+                    'subject_type' => $a->model_type ?? '',
                     'description'  => $a->description ?? '',
                     'created_at'   => $a->created_at,
                 ]),
         ];
         return response()->json(['data' => $stats]);
     });
+
+    // Reports stats
     Route::get('reports/stats', function () {
         return response()->json(['data' => [
             'total_contents'  => \App\Models\Content::count(),
@@ -210,7 +207,18 @@ Route::middleware(['auth:sanctum'])->prefix('v1/admin')->group(function () {
             'total_galleries' => \DB::table('galleries')->count(),
         ]]);
     });
+
+    // Notifications
     Route::get('notifications', function () {
         return response()->json(['data' => []]);
     });
+});
+
+// ─── Health check ─────────────────────────────────────────────────────────────
+Route::get('/health', function () {
+    return response()->json([
+        'status'    => 'ok',
+        'timestamp' => now()->toISOString(),
+        'version'   => '1.0.0',
+    ]);
 });

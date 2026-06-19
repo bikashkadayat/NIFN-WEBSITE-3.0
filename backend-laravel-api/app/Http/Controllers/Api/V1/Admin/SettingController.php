@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Services\RevalidationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -35,6 +36,8 @@ class SettingController extends Controller
             );
         }
 
+        RevalidationService::trigger('all');
+
         return response()->json(['message' => 'Settings updated.']);
     }
 
@@ -43,6 +46,8 @@ class SettingController extends Controller
         $setting = Setting::where('key', $key)->firstOrFail();
 
         $setting->update(['value' => $request->value]);
+
+        RevalidationService::trigger('all');
 
         return response()->json(['data' => $setting, 'message' => 'Setting updated.']);
     }
