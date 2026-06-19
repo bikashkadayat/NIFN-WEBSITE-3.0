@@ -19,23 +19,20 @@ class News extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'id', 'news_category_id', 'featured_image_id', 'banner_image_id',
-        'status', 'is_featured', 'is_breaking', 'published_at', 'scheduled_at', 'view_count',
+        'id', 'category_id', 'featured_image_id',
+        'is_published', 'is_featured', 'is_breaking', 'published_at',
     ];
 
     protected $casts = [
+        'is_published' => 'boolean',
         'is_featured'  => 'boolean',
         'is_breaking'  => 'boolean',
         'published_at' => 'datetime',
-        'scheduled_at' => 'datetime',
-        'view_count'   => 'integer',
     ];
-
-    public function getIsPublishedAttribute(): bool { return $this->status === 'published'; }
 
     public function scopePublished($query)
     {
-        return $query->where('status', 'published')
+        return $query->where('is_published', true)
                      ->whereNotNull('published_at')
                      ->where('published_at', '<=', now());
     }
@@ -47,7 +44,7 @@ class News extends Model
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(NewsCategory::class, 'news_category_id');
+        return $this->belongsTo(NewsCategory::class, 'category_id');
     }
 
     public function featuredImage(): BelongsTo
@@ -57,7 +54,7 @@ class News extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class, 'news_tags', 'news_id', 'tag_id');
+        return $this->belongsToMany(Tag::class, 'news_tag', 'news_id', 'tag_id');
     }
 
     public function translation(string $locale = 'en'): ?NewsTranslation

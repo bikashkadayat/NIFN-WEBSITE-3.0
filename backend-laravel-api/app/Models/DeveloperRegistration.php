@@ -17,27 +17,15 @@ class DeveloperRegistration extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'contact_name',
+        'name',
         'email',
-        'organization_name',
-        'organization_type',
-        'use_case',
+        'organization',
+        'institution_type',
+        'message',
         'status',
-        'admin_notes',
-        'sandbox_credentials',
-        'is_read',
-        'read_at',
-        'credentials_sent_at',
-    ];
-
-    protected $casts = [
-        'is_read' => 'boolean',
-        'read_at' => 'datetime',
-        'credentials_sent_at' => 'datetime',
     ];
 
     protected $attributes = [
         'status' => 'pending',
-        'is_read' => false,
     ];
 }

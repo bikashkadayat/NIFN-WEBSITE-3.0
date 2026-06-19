@@ -17,16 +17,25 @@ class DeveloperRegistrationController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'contact_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'organization_name' => ['nullable', 'string', 'max:255'],
-            'organization_type' => ['required', 'string', 'max:100'],
-            'use_case' => ['nullable', 'string', 'max:5000'],
-            'agreed_terms' => ['required', 'boolean', 'accepted'],
+        // Accept both old field names and DB column names for compatibility
+        $request->merge([
+            'name' => $request->input('name') ?? $request->input('contact_name'),
+            'organization' => $request->input('organization') ?? $request->input('organization_name'),
+            'institution_type' => $request->input('institution_type') ?? $request->input('organization_type'),
+            'message' => $request->input('message') ?? $request->input('use_case'),
         ]);
 
-        unset($validated['agreed_terms']);
+        $validated = $request->validate([
+            'name'             => ['required', 'string', 'max:255'],
+            'email'            => ['required', 'email', 'max:255'],
+            'organization'     => ['nullable', 'string', 'max:255'],
+            'institution_type' => ['required', 'string', 'max:100'],
+            'message'          => ['nullable', 'string', 'max:5000'],
+            'terms_accepted'   => ['sometimes', 'boolean'],
+            'agreed_terms'     => ['sometimes', 'boolean'],
+        ]);
+
+        unset($validated['terms_accepted'], $validated['agreed_terms']);
 
         try {
             $registration = DeveloperRegistration::create($validated);
@@ -59,9 +68,9 @@ class DeveloperRegistrationController extends Controller
             $search = $request->search;
 
             $query->where(function ($q) use ($search) {
-                $q->where('contact_name', 'ilike', '%' . $search . '%')
+                $q->where('name', 'ilike', '%' . $search . '%')
                     ->orWhere('email', 'ilike', '%' . $search . '%')
-                    ->orWhere('organization_name', 'ilike', '%' . $search . '%');
+                    ->orWhere('organization', 'ilike', '%' . $search . '%');
             });
         }
 
@@ -75,13 +84,6 @@ class DeveloperRegistrationController extends Controller
     {
         $registration = DeveloperRegistration::findOrFail($id);
 
-        if (!$registration->is_read) {
-            $registration->update([
-                'is_read' => true,
-                'read_at' => now(),
-            ]);
-        }
-
         return response()->json([
             'success' => true,
             'data' => $registration,
@@ -92,16 +94,9 @@ class DeveloperRegistrationController extends Controller
     {
         $validated = $request->validate([
             'status' => ['sometimes', 'in:' . implode(',', self::STATUSES)],
-            'admin_notes' => ['sometimes', 'nullable', 'string'],
-            'sandbox_credentials' => ['sometimes', 'nullable', 'string'],
         ]);
 
         $registration = DeveloperRegistration::findOrFail($id);
-
-        if (isset($validated['sandbox_credentials']) && !$registration->credentials_sent_at) {
-            $validated['credentials_sent_at'] = now();
-        }
-
         $registration->update($validated);
 
         return response()->json([
@@ -122,10 +117,7 @@ class DeveloperRegistrationController extends Controller
     public function markRead(string $id): JsonResponse
     {
         $registration = DeveloperRegistration::findOrFail($id);
-        $registration->update([
-            'is_read' => true,
-            'read_at' => now(),
-        ]);
+        $registration->update(['status' => 'reviewing']);
 
         return response()->json([
             'success' => true,
@@ -138,7 +130,7 @@ class DeveloperRegistrationController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'unread_count' => DeveloperRegistration::where('is_read', false)->count(),
+                'unread_count' => DeveloperRegistration::where('status', 'pending')->count(),
             ],
         ]);
     }
@@ -146,11 +138,7 @@ class DeveloperRegistrationController extends Controller
     public function markReviewed(string $id): JsonResponse
     {
         $registration = DeveloperRegistration::findOrFail($id);
-        $registration->update([
-            'status' => 'reviewing',
-            'is_read' => true,
-            'read_at' => now(),
-        ]);
+        $registration->update(['status' => 'reviewing']);
 
         return response()->json([
             'success' => true,

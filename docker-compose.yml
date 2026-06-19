@@ -15,7 +15,7 @@ services:
       - nifn-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U nifn_user -d nifn"]
+      test: ["CMD-SHELL", "pg_isready -U nifn -d nifn"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -31,13 +31,17 @@ services:
       - "8000:8000"
     volumes:
       - storage_data:/app/storage/app/public
+      - ./backend-laravel-api/app:/app/app
+      - ./backend-laravel-api/config:/app/config
+      - ./backend-laravel-api/routes:/app/routes
     depends_on:
       postgres:
         condition: service_healthy
     environment:
-      - APP_ENV=production
-      - APP_DEBUG=false
-      - APP_URL=https://api.nifn.org.np
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:8000
+      - APP_KEY=base64:0uer5SB2fHUUsZE2v3ht31f74QlP0KcbJfBGpvoy4l4=
       - DB_CONNECTION=pgsql
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -48,7 +52,12 @@ services:
       - FILESYSTEM_DISK=public
       - CACHE_STORE=file
       - QUEUE_CONNECTION=sync
-      - LOG_LEVEL=warning
+      - LOG_LEVEL=debug
+      - FRONTEND_URL=http://website:3000
+      - DEVELOPER_PORTAL_URL=http://developer-portal:3000
+      - ADMIN_URL=http://admin:3000
+      - REVALIDATE_SECRET=nifn-secret-2024
+      - SANCTUM_STATEFUL_DOMAINS=localhost:3007,localhost:3008,localhost:3006
     networks:
       - nifn-network
     restart: unless-stopped
@@ -58,35 +67,55 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+        - NEXT_PUBLIC_SITE_URL=http://localhost:3007
+        - NEXT_PUBLIC_DEVELOPER_PORTAL_URL=http://localhost:3006
+        - NEXT_PUBLIC_ADMIN_URL=http://localhost:3008
+        - REVALIDATE_SECRET=nifn-secret-2024
     container_name: nifn-website
     ports:
       - "3007:3000"
     depends_on:
       - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - NEXT_PUBLIC_API_URL=https://api.nifn.org.np/api
-      - NEXT_PUBLIC_SITE_URL=https://nifn.org.np
+      - NEXT_PUBLIC_API_URL=http://host.docker.internal:8000/api
+      - NEXT_PUBLIC_SITE_URL=http://localhost:3007
+      - NEXT_PUBLIC_DEVELOPER_PORTAL_URL=http://localhost:3006
+      - NEXT_PUBLIC_ADMIN_URL=http://localhost:3008
+      - REVALIDATE_SECRET=nifn-secret-2024
     networks:
       - nifn-network
     restart: unless-stopped
 
-  # ─── Admin Dashboard (same frontend codebase, separate instance) ─
+  # ─── Admin Dashboard ─────────────────────────────────────────
   admin:
     build:
-      context: ./frontend
+      context: ./admin
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8000
+        - NEXT_PUBLIC_SITE_URL=http://localhost:3008
+        - NEXT_PUBLIC_MAIN_SITE_URL=http://localhost:3007
+        - NEXT_PUBLIC_DEVELOPER_PORTAL_URL=http://localhost:3006
     container_name: nifn-admin
     ports:
       - "3008:3000"
     depends_on:
       - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - NEXT_PUBLIC_API_URL=https://api.nifn.org.np/api
-      - NEXT_PUBLIC_SITE_URL=https://admin.nifn.org.np
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_SITE_URL=http://localhost:3008
+      - NEXT_PUBLIC_MAIN_SITE_URL=http://localhost:3007
+      - NEXT_PUBLIC_DEVELOPER_PORTAL_URL=http://localhost:3006
     networks:
       - nifn-network
     restart: unless-stopped
@@ -96,16 +125,27 @@ services:
     build:
       context: ./developer-portal
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+        - NEXT_PUBLIC_SITE_URL=http://localhost:3006
+        - NEXT_PUBLIC_MAIN_SITE_URL=http://localhost:3007
+        - NEXT_PUBLIC_ADMIN_URL=http://localhost:3008
+        - REVALIDATE_SECRET=nifn-secret-2024
     container_name: nifn-developer
     ports:
       - "3006:3000"
     depends_on:
       - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - NEXT_PUBLIC_API_URL=https://api.nifn.org.np/api
-      - NEXT_PUBLIC_SITE_URL=https://developers.nifn.org.np
+      - NEXT_PUBLIC_API_URL=http://host.docker.internal:8000/api
+      - NEXT_PUBLIC_SITE_URL=http://localhost:3006
+      - NEXT_PUBLIC_MAIN_SITE_URL=http://localhost:3007
+      - NEXT_PUBLIC_ADMIN_URL=http://localhost:3008
+      - REVALIDATE_SECRET=nifn-secret-2024
     networks:
       - nifn-network
     restart: unless-stopped

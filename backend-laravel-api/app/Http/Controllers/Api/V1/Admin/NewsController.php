@@ -28,7 +28,7 @@ class NewsController extends Controller
         }
 
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $query->where('is_published', $request->status === 'published');
         }
 
         return response()->json($query->paginate($request->integer('per_page', 20)));
@@ -38,12 +38,12 @@ class NewsController extends Controller
     {
         $news = DB::transaction(function () use ($request) {
             $news = News::create([
-                'news_category_id'  => $request->news_category_id ?? $request->category_id,
+                'category_id'       => $request->news_category_id ?? $request->category_id,
                 'featured_image_id' => $request->featured_image_id,
-                'status'            => $request->boolean('is_published', false) ? 'published' : ($request->status ?? 'draft'),
+                'is_published'      => $request->boolean('is_published', false),
                 'is_featured'       => $request->boolean('is_featured', false),
                 'is_breaking'       => $request->boolean('is_breaking', false),
-                'published_at'      => $request->published_at,
+                'published_at'      => $request->is_published ? ($request->published_at ?? now()) : null,
             ]);
 
             foreach ($request->translations as $trans) {
@@ -87,21 +87,18 @@ class NewsController extends Controller
         $news = News::findOrFail($id);
 
         DB::transaction(function () use ($request, $news) {
-            $statusValue = $news->status;
-            if ($request->has('status')) {
-                $statusValue = $request->status;
-            } elseif ($request->has('is_published')) {
-                $statusValue = $request->boolean('is_published') ? 'published' : 'draft';
-            }
+            $isPublished = $request->has('is_published')
+                ? $request->boolean('is_published')
+                : $news->is_published;
 
-            $news->update(array_filter([
-                'news_category_id'  => $request->news_category_id ?? $request->category_id ?? $news->news_category_id,
+            $news->update([
+                'category_id'       => $request->news_category_id ?? $request->category_id ?? $news->category_id,
                 'featured_image_id' => $request->featured_image_id ?? $news->featured_image_id,
-                'status'            => $statusValue,
+                'is_published'      => $isPublished,
                 'is_featured'       => $request->has('is_featured') ? $request->boolean('is_featured') : $news->is_featured,
                 'is_breaking'       => $request->has('is_breaking') ? $request->boolean('is_breaking') : $news->is_breaking,
-                'published_at'      => $request->has('published_at') ? $request->published_at : $news->published_at,
-            ], fn ($v) => $v !== null));
+                'published_at'      => $request->has('published_at') ? $request->published_at : ($isPublished && !$news->published_at ? now() : $news->published_at),
+            ]);
 
             foreach ($request->translations ?? [] as $trans) {
                 $locale = $trans['locale'];

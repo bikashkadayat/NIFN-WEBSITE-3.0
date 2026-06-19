@@ -18,30 +18,18 @@ class Content extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'id', 'slug', 'portal_type', 'featured_image_id', 'banner_image_id',
-        'status', 'sort_order', 'is_featured', 'parent_id',
-        'show_image_on_detail', 'display_children_as_paginated', 'layout',
-        'published_at', 'view_count',
+        'id', 'slug', 'portal_type', 'featured_image_id',
+        'is_published', 'sort_order',
     ];
 
     protected $casts = [
+        'is_published' => 'boolean',
         'sort_order'   => 'integer',
-        'is_featured'  => 'boolean',
-        'show_image_on_detail' => 'boolean',
-        'display_children_as_paginated' => 'boolean',
-        'published_at' => 'datetime',
-        'view_count'   => 'integer',
     ];
-
-    // Virtual accessor so controllers using is_published still work
-    public function getIsPublishedAttribute(): bool
-    {
-        return $this->status === 'published';
-    }
 
     public function scopePublished($query)
     {
-        return $query->where('status', 'published');
+        return $query->where('is_published', true);
     }
 
     public function translations(): HasMany
