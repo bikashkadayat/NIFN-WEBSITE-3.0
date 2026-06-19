@@ -5,8 +5,8 @@ import { fetchContent } from '@/lib/content-fetch'
 
 export const dynamic = 'force-dynamic'
 
-export async function generateMetadata(): Promise<Metadata> {
-  const content = await fetchContent('technology')
+export async function generateMetadata({ searchParams }: { searchParams: { locale?: string } }): Promise<Metadata> {
+  const content = await fetchContent('technology', searchParams?.locale)
   if (!content) return { title: 'Technology | NIFN' }
   return {
     title: content.seo_title || `${content.title} | NIFN`,
@@ -14,8 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function TechnologyPage() {
-  const content = await fetchContent('technology')
+export default async function TechnologyPage({ searchParams }: { searchParams: { locale?: string } }) {
+  const content = await fetchContent('technology', searchParams?.locale)
   if (!content || !content.body) return <ComingSoon title="Technology" />
 
   return (

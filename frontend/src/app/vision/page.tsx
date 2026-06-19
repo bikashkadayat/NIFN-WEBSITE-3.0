@@ -2,50 +2,23 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Breadcrumb } from '@/components/ui/Breadcrumb'
 import { ComingSoon } from '@/components/ui/ComingSoon'
+import { fetchContent } from '@/lib/content-fetch'
 import { format } from 'date-fns'
 
 export const dynamic = 'force-dynamic'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
-
-interface ContentData {
-  id: string
-  title?: string
-  slug?: string
-  body?: string
-  excerpt?: string
-  featured_image_url?: string
-  seo_title?: string
-  seo_description?: string
-  portal_type?: string
-  created_at?: string
-  updated_at?: string
-}
-
-async function fetchContent(slug: string, locale?: string): Promise<ContentData | null> {
-  try {
-    const url = locale ? `${API_URL}/v1/content/${slug}?locale=${locale}` : `${API_URL}/v1/content/${slug}`
-    const res = await fetch(url, { next: { revalidate: 60 } })
-    if (!res.ok) return null
-    const json = await res.json()
-    return json?.data || null
-  } catch {
-    return null
-  }
-}
-
 export async function generateMetadata({ searchParams }: { searchParams: { locale?: string } }): Promise<Metadata> {
-  const content = await fetchContent('about', searchParams?.locale)
-  if (!content) return { title: 'About NIFN' }
+  const content = await fetchContent('vision', searchParams.locale)
+  if (!content) return { title: 'Our Vision' }
   return {
     title: content.seo_title || `${content.title} | NIFN`,
     description: content.seo_description || content.excerpt || '',
   }
 }
 
-export default async function AboutPage({ searchParams }: { searchParams: { locale?: string } }) {
-  const content = await fetchContent('about', searchParams?.locale)
-  if (!content || !content.body) return <ComingSoon title="About NIFN" />
+export default async function VisionPage({ searchParams }: { searchParams: { locale?: string } }) {
+  const content = await fetchContent('vision', searchParams.locale)
+  if (!content || !content.body) return <ComingSoon title="Our Vision" />
 
   return (
     <>
@@ -54,7 +27,7 @@ export default async function AboutPage({ searchParams }: { searchParams: { loca
           <Breadcrumb
             items={[
               { label: 'Home', href: '/' },
-              { label: content.title || 'About' },
+              { label: content.title || 'Our Vision' },
             ]}
             className="mb-6"
           />

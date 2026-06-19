@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin } from 'lucide-react'
 import { Breadcrumb } from '@/components/ui/Breadcrumb'
 import { ContactForm } from '@/components/forms/ContactForm'
+import { fetchContent } from '@/lib/content-fetch'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,15 +21,19 @@ async function fetchSettings(): Promise<SettingsMap> {
   }
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: { searchParams?: { locale?: string } }): Promise<Metadata> {
+  const content = await fetchContent('contact', searchParams?.locale)
   return {
-    title: 'Contact Us | NIFN',
-    description: 'Get in touch with the Nepal Interledger Financial Network.',
+    title: content?.seo_title || content?.title || 'Contact Us | NIFN',
+    description: content?.seo_description || content?.excerpt || 'Get in touch with the Nepal Interledger Financial Network.',
   }
 }
 
-export default async function ContactPage() {
-  const settings = await fetchSettings()
+export default async function ContactPage({ searchParams }: { searchParams?: { locale?: string } }) {
+  const [settings, contactContent] = await Promise.all([
+    fetchSettings(),
+    fetchContent('contact', searchParams?.locale),
+  ])
 
   const email = (settings.contact_email as string) || 'info@nifn.org.np'
   const phone = (settings.contact_phone as string) || ''
@@ -49,10 +54,10 @@ export default async function ContactPage() {
             className="mb-6"
           />
           <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
-            Contact Us
+            {contactContent?.title || 'Contact Us'}
           </h1>
           <p className="text-lg text-white/80 max-w-2xl">
-            Have a question or want to learn more? We&apos;d love to hear from you.
+            {contactContent?.excerpt || "Have a question or want to learn more? We'd love to hear from you."}
           </p>
         </div>
       </section>

@@ -12,13 +12,23 @@ export interface ContentData {
   portal_type?: string
 }
 
-export async function fetchContent(slug: string): Promise<ContentData | null> {
+export async function fetchContent(slug: string, locale?: string): Promise<ContentData | null> {
   try {
-    const res = await fetch(`${API_URL}/v1/content/${slug}`, { next: { revalidate: 60 } })
+    const params = locale ? `?locale=${locale}` : ''
+    const res = await fetch(`${API_URL}/v1/content/${slug}${params}`, { next: { revalidate: 60 } })
     if (!res.ok) return null
     const json = await res.json()
     return json?.data || null
   } catch {
     return null
+  }
+}
+
+export async function fetchSettings(): Promise<Record<string, string | number | boolean>> {
+  try {
+    const res = await fetch(`${API_URL}/v1/settings/public`, { next: { revalidate: 300 } })
+    return res.json()
+  } catch {
+    return {}
   }
 }

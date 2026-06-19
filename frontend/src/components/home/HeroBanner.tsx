@@ -5,12 +5,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
 import type { Banner } from '@/types'
+import type { ContentData } from '@/lib/content-fetch'
 
 interface HeroBannerProps {
   banners: Banner[]
+  content?: ContentData | null
 }
 
-export function HeroBanner({ banners }: HeroBannerProps) {
+export function HeroBanner({ banners, content }: HeroBannerProps) {
   const [current, setCurrent] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -60,12 +62,10 @@ export function HeroBanner({ banners }: HeroBannerProps) {
         </div>
         <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.1] tracking-tight mb-6">
-            Open. Interoperable.
-            <br />
-            Inclusive.
+            {content?.title || 'Open. Interoperable.\nInclusive.'}
           </h1>
           <p className="text-xl sm:text-2xl md:text-3xl text-cyan-100/90 font-light mb-12 max-w-3xl mx-auto">
-            Built on the Interledger Protocol
+            {content?.excerpt || 'Built on the Interledger Protocol'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link

@@ -7,6 +7,7 @@ import { PlaceholderImage } from '@/components/ui/PlaceholderImage'
 import { Badge } from '@/components/ui/Badge'
 import { Pagination } from '@/components/ui/Pagination'
 import type { News } from '@/types'
+import { fetchContent } from '@/lib/content-fetch'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,10 +50,11 @@ async function fetchCategories(): Promise<Category[]> {
   }
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: { searchParams?: { locale?: string } }): Promise<Metadata> {
+  const content = await fetchContent('news-hero', searchParams?.locale)
   return {
-    title: 'News & Updates | NIFN',
-    description: 'Latest news and updates from the Nepal Interledger Financial Network.',
+    title: content?.seo_title || content?.title || 'News & Updates | NIFN',
+    description: content?.seo_description || content?.excerpt || 'Latest news and updates from the Nepal Interledger Financial Network.',
   }
 }
 
@@ -65,9 +67,10 @@ export default async function NewsListPage({ searchParams }: NewsListPageProps) 
   params.set('per_page', '9')
   if (categorySlug) params.set('category', categorySlug)
 
-  const [newsData, categories] = await Promise.all([
+  const [newsData, categories, heroContent] = await Promise.all([
     fetchNews(params),
     fetchCategories(),
+    fetchContent('news-hero', searchParams?.locale),
   ])
 
   const { data: articles, meta } = newsData
@@ -85,10 +88,10 @@ export default async function NewsListPage({ searchParams }: NewsListPageProps) 
       <section className="bg-gradient-to-br from-cyan-700 via-cyan-800 to-blue-900 py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
-            News & Updates
+            {heroContent?.title || 'News & Updates'}
           </h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Stay informed with the latest news, announcements, and insights from the Nepal Interledger Financial Network.
+            {heroContent?.excerpt || "Stay informed with the latest news, announcements, and insights from the Nepal Interledger Financial Network."}
           </p>
         </div>
       </section>

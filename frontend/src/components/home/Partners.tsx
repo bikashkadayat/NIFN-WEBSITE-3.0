@@ -2,6 +2,11 @@ import Link from 'next/link'
 import { ArrowRight, Building2 } from 'lucide-react'
 import { SectionWrapper } from '@/components/ui/SectionWrapper'
 import { PartnerCard } from '@/components/ui/PartnerCard'
+import type { ContentData } from '@/lib/content-fetch'
+
+interface PartnersProps {
+  content?: ContentData | null
+}
 
 const PARTNERS = [
   { name: 'Nepal Internet Foundation', type: 'Technology & Governance' },
@@ -9,15 +14,15 @@ const PARTNERS = [
   { name: 'Cooperatives', type: 'Financial Services' },
 ]
 
-export function Partners() {
+export function Partners({ content }: PartnersProps) {
   return (
     <SectionWrapper bg="navy">
       <div className="text-center max-w-3xl mx-auto mb-12">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-          Our Partners & Network
+          {content?.title || 'Our Partners & Network'}
         </h2>
         <p className="text-gray-200 text-lg">
-          Together with our partners, we are building an open, interoperable financial network for Nepal.
+          {content?.excerpt || 'Together with our partners, we are building an open, interoperable financial network for Nepal.'}
         </p>
       </div>
 

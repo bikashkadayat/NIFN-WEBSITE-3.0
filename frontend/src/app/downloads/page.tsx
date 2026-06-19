@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { FileText, FileSpreadsheet, FileArchive, FileImage, File, Download, FolderOpen } from 'lucide-react'
 import { Breadcrumb } from '@/components/ui/Breadcrumb'
+import { fetchContent } from '@/lib/content-fetch'
 
 export const dynamic = 'force-dynamic'
 
@@ -52,15 +53,19 @@ function getFileIcon(type: string) {
   return { icon: File, color: 'text-gray-600 bg-gray-50' }
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: { searchParams?: { locale?: string } }): Promise<Metadata> {
+  const content = await fetchContent('downloads-hero', searchParams?.locale)
   return {
-    title: 'Downloads | NIFN',
-    description: 'Download resources, reports, and documents from the Nepal Interledger Financial Network.',
+    title: content?.seo_title || content?.title || 'Downloads | NIFN',
+    description: content?.seo_description || content?.excerpt || 'Download resources, reports, and documents from the Nepal Interledger Financial Network.',
   }
 }
 
-export default async function DownloadsPage() {
-  const categories = await fetchDownloads()
+export default async function DownloadsPage({ searchParams }: { searchParams?: { locale?: string } }) {
+  const [categories, heroContent] = await Promise.all([
+    fetchDownloads(),
+    fetchContent('downloads-hero', searchParams?.locale),
+  ])
   const hasDownloads = categories.some((c) => c.items.length > 0)
 
   return (
@@ -75,10 +80,10 @@ export default async function DownloadsPage() {
             className="mb-6"
           />
           <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
-            Downloads
+            {heroContent?.title || 'Downloads'}
           </h1>
           <p className="text-lg text-white/80 max-w-2xl">
-            Access reports, guides, and resources from NIFN.
+            {heroContent?.excerpt || 'Access reports, guides, and resources from NIFN.'}
           </p>
         </div>
       </section>

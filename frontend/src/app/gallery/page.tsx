@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { ImageIcon } from 'lucide-react'
 import { GalleryCard } from '@/components/ui/GalleryCard'
 import type { Gallery } from '@/types'
+import { fetchContent } from '@/lib/content-fetch'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,25 +21,29 @@ async function fetchGalleries(): Promise<Gallery[]> {
   }
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: { searchParams?: { locale?: string } }): Promise<Metadata> {
+  const content = await fetchContent('gallery-hero', searchParams?.locale)
   return {
-    title: 'Photo Gallery | NIFN',
-    description: 'Browse photos from Nepal Interledger Financial Network events and activities.',
+    title: content?.seo_title || content?.title || 'Photo Gallery | NIFN',
+    description: content?.seo_description || content?.excerpt || 'Browse photos from Nepal Interledger Financial Network events and activities.',
   }
 }
 
-export default async function GalleryListPage() {
-  const galleries = await fetchGalleries()
+export default async function GalleryListPage({ searchParams }: { searchParams?: { locale?: string } }) {
+  const [galleries, heroContent] = await Promise.all([
+    fetchGalleries(),
+    fetchContent('gallery-hero', searchParams?.locale),
+  ])
 
   return (
     <>
       <section className="bg-gradient-to-br from-cyan-700 via-cyan-800 to-blue-900 py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
-            Photo Gallery
+            {heroContent?.title || 'Photo Gallery'}
           </h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Explore moments from NIFN events, workshops, and community gatherings.
+            {heroContent?.excerpt || 'Explore moments from NIFN events, workshops, and community gatherings.'}
           </p>
         </div>
       </section>

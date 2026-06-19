@@ -4,6 +4,7 @@ import { VideoSection } from '@/components/home/VideoSection'
 import { LatestNews } from '@/components/home/LatestNews'
 import { Partners } from '@/components/home/Partners'
 import { CallToAction } from '@/components/home/CallToAction'
+import { fetchContent } from '@/lib/content-fetch'
 import type { Banner } from '@/types'
 
 export const dynamic = 'force-dynamic'
@@ -43,7 +44,7 @@ async function fetchSettings(): Promise<SettingMap> {
   }
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: { searchParams: { locale?: string } }): Promise<Metadata> {
   const settings = await fetchSettings()
   return {
     title: (settings.site_name as string) || 'Nepal Interledger Financial Network',
@@ -51,19 +52,24 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function HomePage() {
-  const [banners, featuredNews] = await Promise.all([
+export default async function HomePage({ searchParams }: { searchParams: { locale?: string } }) {
+  const locale = searchParams?.locale
+  const [banners, featuredNews, heroContent, statsContent, featuresContent, ctaContent] = await Promise.all([
     fetchBanners(),
     fetchFeaturedNews(),
+    fetchContent('home-hero', locale),
+    fetchContent('home-stats', locale),
+    fetchContent('home-features', locale),
+    fetchContent('home-cta', locale),
   ])
 
   return (
     <>
-      <HeroBanner banners={banners} />
+      <HeroBanner banners={banners} content={heroContent} />
       <VideoSection />
-      <LatestNews news={featuredNews} />
-      <Partners />
-      <CallToAction />
+      <LatestNews news={featuredNews} sectionTitle="Latest News" />
+      <Partners content={featuresContent} />
+      <CallToAction content={ctaContent} />
     </>
   )
 }

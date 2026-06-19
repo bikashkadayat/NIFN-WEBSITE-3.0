@@ -1,15 +1,20 @@
 import Link from 'next/link'
 import { ArrowRight, ExternalLink } from 'lucide-react'
+import type { ContentData } from '@/lib/content-fetch'
 
-export function CallToAction() {
+interface CallToActionProps {
+  content?: ContentData | null
+}
+
+export function CallToAction({ content }: CallToActionProps) {
   return (
     <section className="py-20 md:py-28 bg-gradient-to-r from-[#0F172A] via-[#1e3a5f] to-[#0891b2cc]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
-          Ready to Join Nepal&apos;s Open Payment Network?
+          {content?.title || "Ready to Join Nepal's Open Payment Network?"}
         </h2>
         <p className="text-lg text-white/80 mb-10 max-w-2xl mx-auto">
-          Whether you&apos;re a cooperative, a developer, or an organization, there&apos;s a place for you in the NIFN ecosystem.
+          {content?.excerpt || "Whether you're a cooperative, a developer, or an organization, there's a place for you in the NIFN ecosystem."}
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <Link

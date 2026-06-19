@@ -17,14 +17,15 @@ interface NewsItem {
 
 interface LatestNewsProps {
   news: NewsItem[]
+  sectionTitle?: string
 }
 
-export function LatestNews({ news }: LatestNewsProps) {
+export function LatestNews({ news, sectionTitle }: LatestNewsProps) {
   return (
     <SectionWrapper bg="gray">
       <div className="flex items-center justify-between mb-10">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-          Latest News
+          {sectionTitle || 'Latest News'}
         </h2>
         <Link
           href="/news"

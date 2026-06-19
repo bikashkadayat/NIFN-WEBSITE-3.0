@@ -5,8 +5,8 @@ import { fetchContent } from '@/lib/content-fetch'
 
 export const dynamic = 'force-dynamic'
 
-export async function generateMetadata(): Promise<Metadata> {
-  const content = await fetchContent('ecosystem')
+export async function generateMetadata({ searchParams }: { searchParams: { locale?: string } }): Promise<Metadata> {
+  const content = await fetchContent('ecosystem', searchParams?.locale)
   if (!content) return { title: 'Ecosystem | NIFN' }
   return {
     title: content.seo_title || `${content.title} | NIFN`,
@@ -14,8 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function EcosystemPage() {
-  const content = await fetchContent('ecosystem')
+export default async function EcosystemPage({ searchParams }: { searchParams: { locale?: string } }) {
+  const content = await fetchContent('ecosystem', searchParams?.locale)
   if (!content || !content.body) return <ComingSoon title="Ecosystem" />
 
   return (
