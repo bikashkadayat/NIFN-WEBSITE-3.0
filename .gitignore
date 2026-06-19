@@ -28,6 +28,8 @@ docker-compose.override.yml
 *.local.yml
 *.local.yaml
 /backend-laravel-api/.env
+/backend-laravel-api/.env.local
+/backend-laravel-api/database/*.sqlite
 /backend-laravel-api/vendor
 /backend-laravel-api/node_modules
 /backend-laravel-api/storage/*

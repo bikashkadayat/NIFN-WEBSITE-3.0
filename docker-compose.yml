@@ -60,7 +60,7 @@ services:
       dockerfile: Dockerfile
     container_name: nifn-website
     ports:
-      - "3000:3000"
+      - "3007:3000"
     depends_on:
       - backend
     environment:
@@ -79,7 +79,7 @@ services:
       dockerfile: Dockerfile
     container_name: nifn-admin
     ports:
-      - "3002:3000"
+      - "3008:3000"
     depends_on:
       - backend
     environment:
@@ -98,7 +98,7 @@ services:
       dockerfile: Dockerfile
     container_name: nifn-developer
     ports:
-      - "3003:3000"
+      - "3006:3000"
     depends_on:
       - backend
     environment:
