@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'prismjs/themes/prism-tomorrow.css';
+
+body {
+  color: #111827;
+  background: #ffffff;
+  font-family: var(--font-rubik), system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+pre::-webkit-scrollbar {
+  height: 6px;
+}
+pre::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+pre::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+.prose pre {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* Code block wrapper for Portal-based rendering */
+.code-block-wrapper {
+  margin: 1.5rem 0;
+}

@@ -1,0 +1,138 @@
+services:
+  # ─── PostgreSQL ──────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: nifn-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=nifn
+      - POSTGRES_USER=nifn
+      - POSTGRES_PASSWORD=nifn_secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - nifn-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nifn_user -d nifn"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Laravel API ─────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend-laravel-api
+      dockerfile: Dockerfile
+    container_name: nifn-api
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    volumes:
+      - storage_data:/app/storage/app/public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=https://api.nifn.org.np
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=nifn
+      - DB_USERNAME=nifn
+      - DB_PASSWORD=nifn_secret
+      - SESSION_DRIVER=file
+      - FILESYSTEM_DISK=public
+      - CACHE_STORE=file
+      - QUEUE_CONNECTION=sync
+      - LOG_LEVEL=warning
+    networks:
+      - nifn-network
+    restart: unless-stopped
+
+  # ─── Website (public frontend) ──────────────────────────────
+  website:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nifn-website
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - NEXT_PUBLIC_API_URL=https://api.nifn.org.np/api
+      - NEXT_PUBLIC_SITE_URL=https://nifn.org.np
+    networks:
+      - nifn-network
+    restart: unless-stopped
+
+  # ─── Admin Dashboard (same frontend codebase, separate instance) ─
+  admin:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nifn-admin
+    ports:
+      - "3002:3000"
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - NEXT_PUBLIC_API_URL=https://api.nifn.org.np/api
+      - NEXT_PUBLIC_SITE_URL=https://admin.nifn.org.np
+    networks:
+      - nifn-network
+    restart: unless-stopped
+
+  # ─── Developer Portal ──────────────────────────────────────
+  developer-portal:
+    build:
+      context: ./developer-portal
+      dockerfile: Dockerfile
+    container_name: nifn-developer
+    ports:
+      - "3003:3000"
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - NEXT_PUBLIC_API_URL=https://api.nifn.org.np/api
+      - NEXT_PUBLIC_SITE_URL=https://developers.nifn.org.np
+    networks:
+      - nifn-network
+    restart: unless-stopped
+
+  # ─── Nginx (reverse proxy) ──────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: nifn-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - storage_data:/storage:ro
+    depends_on:
+      - backend
+      - website
+      - admin
+      - developer-portal
+    networks:
+      - nifn-network
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  storage_data:
+
+networks:
+  nifn-network:
+    driver: bridge
