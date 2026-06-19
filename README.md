@@ -15,7 +15,7 @@ The **Nepal Internet Foundation (NIFN)** website — a multi-service content man
                 │                │                     │
          ┌──────┴──────┐  ┌─────┴──────┐  ┌───────────┴────┐
          │  Frontend   │  │   Admin    │  │  Developer     │
-         │  :3000      │  │  :3002     │  │  Portal :3003  │
+         │  :3007      │  │  :3008     │  │  Portal :3006  │
          │  (Next.js)  │  │  (Next.js) │  │  (Next.js)     │
          └──────┬──────┘  └─────┬──────┘  └───────────┬────┘
                 │               │                      │
