@@ -31,7 +31,7 @@ export default function DownloadsPage() {
   const [search, setSearch] = useState("")
   const [status, setStatus] = useState("")
   const [categoryId, setCategoryId] = useState("")
-  const [deleteId, setDeleteId] = useState<number | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const { data: downloadsRes, isLoading } = useDownloads({
     page,

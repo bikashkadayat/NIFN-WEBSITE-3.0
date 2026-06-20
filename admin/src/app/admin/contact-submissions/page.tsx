@@ -27,7 +27,7 @@ export default function ContactSubmissionsPage() {
   const [page, setPage] = useState(1)
   const [activeTab, setActiveTab] = useState<FilterTab>("all")
   const [selectedItem, setSelectedItem] = useState<ContactSubmission | null>(null)
-  const [deleteId, setDeleteId] = useState<number | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const params: Record<string, unknown> = { page }
   if (activeTab === "unread") params.is_read = 0

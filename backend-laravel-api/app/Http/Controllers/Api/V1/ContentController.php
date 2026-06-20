@@ -26,16 +26,8 @@ class ContentController extends Controller
     {
         $content = Content::with(['translations', 'featuredImage'])
             ->published()
-            ->whereHas('translations', fn($q) => $q->where('slug', $slug))
+            ->where('slug', $slug)
             ->first();
-
-        if (!$content) {
-            // Also try direct slug column
-            $content = Content::with(['translations', 'featuredImage'])
-                ->published()
-                ->where('slug', $slug)
-                ->first();
-        }
 
         if (!$content) {
             return response()->json(['success' => false, 'message' => 'Content not found.'], 404);

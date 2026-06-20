@@ -98,7 +98,7 @@ export default function EditDownloadPage() {
         { locale: "ne", ...translations.ne },
       ]))
 
-      await updateDownload.mutateAsync({ id: Number(id), data: formData })
+      await updateDownload.mutateAsync({ id: id, data: formData })
       router.push("/admin/downloads")
     } finally {
       setSubmitting(false)

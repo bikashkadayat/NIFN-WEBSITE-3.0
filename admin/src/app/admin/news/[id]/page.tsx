@@ -129,7 +129,7 @@ export default function EditNewsPage() {
     setSubmitting(true)
     try {
       await updateNews.mutateAsync({
-        id: Number(id),
+        id: id,
         data: {
           slug,
           is_published: isPublished,

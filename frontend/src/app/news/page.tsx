@@ -33,7 +33,7 @@ interface NewsListPageProps {
 
 async function fetchNews(params: URLSearchParams): Promise<{ data: News[]; meta: PaginationMeta }> {
   try {
-    const res = await fetch(`${API_URL}/v1/news?${params.toString()}`, { next: { revalidate: 60 } })
+    const res = await fetch(`${API_URL}/v1/news?${params.toString()}`, { next: { revalidate: 60, tags: ["news"] } })
     return res.json()
   } catch {
     return { data: [], meta: { current_page: 1, last_page: 1, per_page: 9, total: 0 } }
@@ -42,7 +42,7 @@ async function fetchNews(params: URLSearchParams): Promise<{ data: News[]; meta:
 
 async function fetchCategories(): Promise<Category[]> {
   try {
-    const res = await fetch(`${API_URL}/v1/news/categories`, { next: { revalidate: 120 } })
+    const res = await fetch(`${API_URL}/v1/news/categories`, { next: { revalidate: 120, tags: ['news-categories'] } })
     const json = await res.json()
     return json?.data || []
   } catch {

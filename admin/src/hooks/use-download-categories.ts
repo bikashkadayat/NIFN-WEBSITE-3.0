@@ -13,10 +13,10 @@ export function useDownloadCategories(params?: Record<string, unknown>) {
   })
 }
 
-export function useDownloadCategory(id: number | string) {
+export function useDownloadCategory(id: string) {
   return useQuery({
     queryKey: ['download-category', id],
-    queryFn: async () => { const res = await downloadCategoriesApi.get(Number(id)) as { data: DownloadCategory }; return res.data },
+    queryFn: async () => { const res = await downloadCategoriesApi.get(String(id)) as { data: DownloadCategory }; return res.data },
     enabled: !!id,
   })
 }
@@ -33,7 +33,7 @@ export function useCreateDownloadCategory() {
 export function useUpdateDownloadCategory() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: unknown }) => downloadCategoriesApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: unknown }) => downloadCategoriesApi.update(id, data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['download-categories'] }); toast.success('Category updated') },
     onError: (err: { response?: { data?: { message?: string } } }) => { toast.error(err.response?.data?.message || 'Failed') },
   })
@@ -42,7 +42,7 @@ export function useUpdateDownloadCategory() {
 export function useDeleteDownloadCategory() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => downloadCategoriesApi.delete(id),
+    mutationFn: (id: string) => downloadCategoriesApi.delete(String(id)),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['download-categories'] }); toast.success('Category deleted') },
     onError: () => toast.error('Failed to delete'),
   })

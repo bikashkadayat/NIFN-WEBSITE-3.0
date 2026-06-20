@@ -13,10 +13,10 @@ export function useTags(params?: Record<string, unknown>) {
   })
 }
 
-export function useTag(id: number | string) {
+export function useTag(id: string) {
   return useQuery({
     queryKey: ['tag', id],
-    queryFn: async () => { const res = await tagsApi.get(Number(id)) as { data: Tag }; return res.data },
+    queryFn: async () => { const res = await tagsApi.get(String(id)) as { data: Tag }; return res.data },
     enabled: !!id,
   })
 }
@@ -33,7 +33,7 @@ export function useCreateTag() {
 export function useUpdateTag() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: unknown }) => tagsApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: unknown }) => tagsApi.update(id, data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['tags'] }); toast.success('Tag updated') },
     onError: (err: { response?: { data?: { message?: string } } }) => { toast.error(err.response?.data?.message || 'Failed') },
   })
@@ -42,7 +42,7 @@ export function useUpdateTag() {
 export function useDeleteTag() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => tagsApi.delete(id),
+    mutationFn: (id: string) => tagsApi.delete(String(id)),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['tags'] }); toast.success('Tag deleted') },
     onError: () => toast.error('Failed to delete'),
   })

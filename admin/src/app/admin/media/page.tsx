@@ -112,7 +112,7 @@ export default function MediaPage() {
                   )}
                   <div className="p-2">
                     <p className="text-xs text-zinc-700 truncate">{item.file_name}</p>
-                    <p className="text-xs text-zinc-400">{formatFileSize(item.size)}</p>
+                    <p className="text-xs text-zinc-400">{formatFileSize(item.file_size)}</p>
                   </div>
                   <button onClick={(e) => { e.stopPropagation(); setDeleteId(item.id) }}
                     className="absolute top-1 right-1 hidden group-hover:flex items-center justify-center h-6 w-6 rounded-full bg-red-500 text-white">
@@ -133,7 +133,7 @@ export default function MediaPage() {
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-zinc-900 truncate">{item.file_name}</p>
-                  <p className="text-xs text-zinc-500">{formatFileSize(item.size)} • {formatDate(item.created_at)}</p>
+                  <p className="text-xs text-zinc-500">{formatFileSize(item.file_size)} • {formatDate(item.created_at)}</p>
                 </div>
                 <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setDeleteId(item.id) }}>
                   <X size={14} className="text-red-500" />
@@ -171,7 +171,7 @@ export default function MediaPage() {
             )}
             <div className="space-y-2 text-sm">
               <div><span className="text-zinc-500">Name:</span> <span className="text-zinc-900 ml-2">{selectedMedia.file_name}</span></div>
-              <div><span className="text-zinc-500">Size:</span> <span className="text-zinc-900 ml-2">{formatFileSize(selectedMedia.size)}</span></div>
+              <div><span className="text-zinc-500">Size:</span> <span className="text-zinc-900 ml-2">{formatFileSize(selectedMedia.file_size)}</span></div>
               <div><span className="text-zinc-500">Type:</span> <span className="text-zinc-900 ml-2">{selectedMedia.mime_type}</span></div>
               <div><span className="text-zinc-500">Uploaded:</span> <span className="text-zinc-900 ml-2">{formatDate(selectedMedia.created_at)}</span></div>
             </div>

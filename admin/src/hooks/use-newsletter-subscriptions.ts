@@ -13,7 +13,7 @@ export function useNewsletterSubscribers(params?: Record<string, unknown>) {
 export function useUnsubscribeNewsletter() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => newsletterApi.unsubscribe(id),
+    mutationFn: (id: string) => newsletterApi.unsubscribe(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['newsletter-subscribers'] }); toast.success('Unsubscribed') },
     onError: () => toast.error('Failed'),
   })
@@ -22,7 +22,7 @@ export function useUnsubscribeNewsletter() {
 export function useDeleteNewsletterSubscriber() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => newsletterApi.delete(id),
+    mutationFn: (id: string) => newsletterApi.delete(String(id)),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['newsletter-subscribers'] }); toast.success('Deleted') },
     onError: () => toast.error('Failed to delete'),
   })

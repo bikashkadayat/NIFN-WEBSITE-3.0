@@ -31,11 +31,16 @@ class PopupNoticeController extends Controller
             'is_active'         => ['boolean'],
             'translations'      => ['required', 'array'],
             'translations.*.locale'       => ['required', 'string', 'size:2'],
-            'translations.*.title'        => ['required', 'string', 'max:255'],
+            'translations.*.title'        => ['nullable', 'string', 'max:255'],
             'translations.*.body'         => ['nullable', 'string'],
             'translations.*.button_text'  => ['nullable', 'string', 'max:100'],
             'translations.*.button_link'  => ['nullable', 'string', 'max:500'],
         ]);
+
+        $enTitle = collect($request->translations)->firstWhere('locale', 'en')['title'] ?? '';
+        if (empty(trim((string) $enTitle))) {
+            return response()->json(['message' => 'English title is required.'], 422);
+        }
 
         $notice = DB::transaction(function () use ($request) {
             $notice = PopupNotice::create([
@@ -49,6 +54,7 @@ class PopupNoticeController extends Controller
             ]);
 
             foreach ($request->translations as $trans) {
+                if (empty(trim($trans['title'] ?? ''))) continue;
                 $notice->translations()->create([
                     'locale'      => $trans['locale'],
                     'title'       => $trans['title'],
@@ -90,6 +96,7 @@ class PopupNoticeController extends Controller
             ], fn ($v) => $v !== null));
 
             foreach ($request->translations ?? [] as $trans) {
+                if (empty(trim($trans['title'] ?? ''))) continue;
                 $notice->translations()->updateOrCreate(
                     ['locale' => $trans['locale']],
                     [

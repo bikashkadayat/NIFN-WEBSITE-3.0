@@ -60,7 +60,7 @@ export default function GalleryEditPage({ params }: { params: Promise<{ id: stri
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     await updateGallery.mutateAsync({
-      id: Number(id),
+      id: id,
       data: {
         slug,
         is_published: isPublished,

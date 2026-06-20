@@ -34,7 +34,7 @@ export function useUpdateMedia() {
 export function useDeleteMedia() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => mediaApi.delete(id),
+    mutationFn: (id: string) => mediaApi.delete(String(id)),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['media'] }); toast.success('File deleted') },
     onError: () => toast.error('Failed to delete'),
   })

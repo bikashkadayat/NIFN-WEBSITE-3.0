@@ -12,43 +12,55 @@ interface HeroBannerProps {
   content?: ContentData | null
 }
 
+const INTERVAL_MS = 6000
+
 export function HeroBanner({ banners, content }: HeroBannerProps) {
   const [current, setCurrent] = useState(0)
-  const [isPaused, setIsPaused] = useState(false)
+  const [visible, setVisible] = useState(true)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const touchStartX = useRef(0)
 
   const len = banners.length
 
-  const goTo = useCallback((index: number) => {
-    setCurrent(index)
-  }, [])
-
-  const goNext = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % len)
-  }, [len])
-
-  const goPrev = useCallback(() => {
-    setCurrent((prev) => (prev - 1 + len) % len)
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    if (len <= 1) return
+    timerRef.current = setInterval(() => {
+      setVisible(false)
+      setTimeout(() => {
+        setCurrent((prev) => (prev + 1) % len)
+        setVisible(true)
+      }, 300)
+    }, INTERVAL_MS)
   }, [len])
 
   useEffect(() => {
-    if (len <= 1 || isPaused) return
-    timerRef.current = setInterval(goNext, 6000)
+    startTimer()
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [len, isPaused, goNext])
+  }, [startTimer])
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX
+  const goTo = useCallback((index: number) => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    setVisible(false)
+    setTimeout(() => {
+      setCurrent(index)
+      setVisible(true)
+    }, 200)
+    // Restart the auto-rotation timer after manual nav
+    setTimeout(startTimer, 200)
+  }, [startTimer])
+
+  const handleTouchStart = useRef(0)
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    handleTouchStart.current = e.touches[0].clientX
   }
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const diff = touchStartX.current - e.changedTouches[0].clientX
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const diff = handleTouchStart.current - e.changedTouches[0].clientX
     if (Math.abs(diff) > 50) {
-      if (diff > 0) goNext()
-      else goPrev()
+      goTo(diff > 0 ? (current + 1) % len : (current - 1 + len) % len)
     }
   }
 
@@ -68,16 +80,10 @@ export function HeroBanner({ banners, content }: HeroBannerProps) {
             {content?.excerpt || 'Built on the Interledger Protocol'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link
-              href="/about"
-              className="w-full sm:w-auto px-8 py-4 bg-cyan-500 hover:bg-cyan-600 text-white text-lg font-semibold rounded-full transition-all shadow-lg hover:shadow-cyan-500/50 hover:scale-105"
-            >
+            <Link href="/about" className="w-full sm:w-auto px-8 py-4 bg-cyan-500 hover:bg-cyan-600 text-white text-lg font-semibold rounded-full transition-all shadow-lg hover:shadow-cyan-500/50 hover:scale-105">
               Learn More
             </Link>
-            <Link
-              href="/join-network"
-              className="w-full sm:w-auto px-8 py-4 border-2 border-white/80 hover:bg-white hover:text-slate-900 text-white text-lg font-semibold rounded-full transition-all hover:scale-105"
-            >
+            <Link href="/join-network" className="w-full sm:w-auto px-8 py-4 border-2 border-white/80 hover:bg-white hover:text-slate-900 text-white text-lg font-semibold rounded-full transition-all hover:scale-105">
               Join Network
             </Link>
           </div>
@@ -107,12 +113,10 @@ export function HeroBanner({ banners, content }: HeroBannerProps) {
   return (
     <section
       className="relative h-[calc(100vh-5rem)] lg:h-[calc(100vh-6rem)] overflow-hidden"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     >
-      {/* Slides */}
+      {/* Slide backgrounds */}
       {banners.map((b, i) => (
         <div
           key={b.id}
@@ -133,13 +137,21 @@ export function HeroBanner({ banners, content }: HeroBannerProps) {
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-700 via-cyan-800 to-blue-900" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70" />
+          <div
+            className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/60"
+            style={{ opacity: (b.overlay_opacity ?? 50) / 100 }}
+          />
         </div>
       ))}
 
-      {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className={clsx('flex flex-col max-w-4xl', alignClasses[alignment as keyof typeof alignClasses])}>
+      {/* Content — fades when transitioning */}
+      <div
+        className={clsx(
+          'relative z-10 h-full flex flex-col justify-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto transition-opacity duration-300',
+          visible ? 'opacity-100' : 'opacity-0'
+        )}
+      >
+        <div className={clsx('flex flex-col max-w-4xl', alignClasses[alignment])}>
           <h1 className="text-5xl md:text-6xl lg:text-8xl font-bold text-white mb-6 leading-[1.1] tracking-tight">
             {slide.title}
           </h1>
@@ -165,7 +177,7 @@ export function HeroBanner({ banners, content }: HeroBannerProps) {
         </div>
       </div>
 
-      {/* Pagination dots */}
+      {/* Dot navigation */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
         {banners.map((b, i) => (
           <button
@@ -181,6 +193,17 @@ export function HeroBanner({ banners, content }: HeroBannerProps) {
           />
         ))}
       </div>
+
+      {/* Progress bar */}
+      {len > 1 && (
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/10 z-10">
+          <div
+            key={current}
+            className="h-full bg-cyan-400/70 animate-progress"
+            style={{ animationDuration: `${INTERVAL_MS}ms` }}
+          />
+        </div>
+      )}
     </section>
   )
 }

@@ -1,5 +1,6 @@
+import type React from 'react'
 import Link from 'next/link'
-import { Copyright, ExternalLink, Facebook, Twitter, Linkedin } from 'lucide-react'
+import { Copyright, ExternalLink, Facebook, Twitter, Linkedin, Instagram, Youtube, Github } from 'lucide-react'
 import { NewsletterForm } from './NewsletterForm'
 
 interface Setting {
@@ -36,8 +37,17 @@ async function getFooterMenu(): Promise<MenuItem[]> {
   }
 }
 
+const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  facebook: Facebook,
+  twitter: Twitter,
+  linkedin: Linkedin,
+  instagram: Instagram,
+  youtube: Youtube,
+  github: Github,
+}
+
 function SocialIcon({ platform, url }: { platform: string; url: string }) {
-  const Icon = platform === 'facebook' ? Facebook : platform === 'twitter' ? Twitter : Linkedin
+  const Icon = SOCIAL_ICONS[platform] ?? Linkedin
   return (
     <a
       href={url}
@@ -59,10 +69,14 @@ export async function Footer() {
   const footerEmail = settings?.footer_email || ''
   const footerPhone = settings?.footer_phone || ''
 
-  const socialLinks: { platform: string; url: string }[] = []
-  if (settings?.facebook_url) socialLinks.push({ platform: 'facebook', url: settings.facebook_url })
-  if (settings?.twitter_url) socialLinks.push({ platform: 'twitter', url: settings.twitter_url })
-  if (settings?.linkedin_url) socialLinks.push({ platform: 'linkedin', url: settings.linkedin_url })
+  const socialLinks: { platform: string; url: string }[] = [
+    { platform: 'facebook', url: settings?.facebook_url || settings?.social_facebook || 'https://facebook.com/nifnnepal' },
+    { platform: 'twitter', url: settings?.twitter_url || settings?.social_twitter || 'https://twitter.com/nifnnepal' },
+    { platform: 'linkedin', url: settings?.linkedin_url || settings?.social_linkedin || 'https://linkedin.com/company/nifnnepal' },
+    { platform: 'instagram', url: settings?.instagram_url || 'https://instagram.com/nifnnepal' },
+    { platform: 'youtube', url: settings?.youtube_url || settings?.social_youtube || 'https://youtube.com/@nifnnepal' },
+    { platform: 'github', url: settings?.github_url || settings?.github_org_url || settings?.social_github || 'https://github.com/nifnnepal' },
+  ]
 
   const quickLinks = footerMenu.filter((item) => item.url && item.title)
   const resourceLinks = [

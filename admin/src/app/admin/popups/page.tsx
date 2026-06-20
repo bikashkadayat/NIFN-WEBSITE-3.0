@@ -27,7 +27,7 @@ const typeBadgeVariant: Record<string, "default" | "warning" | "success" | "seco
 export default function PopupsPage() {
   const router = useRouter()
   const [page, setPage] = useState(1)
-  const [deleteId, setDeleteId] = useState<number | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const { data, isLoading } = usePopupNotices({ page })
   const deleteMutation = useDeletePopupNotice()

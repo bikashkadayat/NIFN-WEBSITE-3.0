@@ -21,11 +21,11 @@ export function useNewsList(params?: NewsParams) {
   })
 }
 
-export function useNewsItem(id: number | string) {
+export function useNewsItem(id: string) {
   return useQuery({
     queryKey: ['news', id],
     queryFn: async () => {
-      const res = await newsApi.get(Number(id)) as { data: News }
+      const res = await newsApi.get(String(id)) as { data: News }
       return res.data
     },
     enabled: !!id,
@@ -56,7 +56,7 @@ export function useCreateNews() {
 export function useUpdateNews() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: unknown }) => newsApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: unknown }) => newsApi.update(id, data),
     onSuccess: (res, { id }) => {
       qc.setQueryData(['news', id], (res as { data: News }).data)
       qc.invalidateQueries({ queryKey: ['news'] })
@@ -78,7 +78,7 @@ export function useUpdateNews() {
 export function useDeleteNewsItem() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => newsApi.delete(id),
+    mutationFn: (id: string) => newsApi.delete(String(id)),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['news'] })
       toast.success('News deleted')

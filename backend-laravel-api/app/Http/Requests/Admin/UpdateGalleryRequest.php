@@ -16,9 +16,10 @@ class UpdateGalleryRequest extends FormRequest
             'sort_order'               => ['nullable', 'integer', 'min:0'],
             'event_date'               => ['nullable', 'date'],
             'translations'             => ['sometimes', 'array'],
+            'slug'                     => ['nullable', 'string', 'max:255'],
             'translations.*.locale'    => ['required_with:translations', 'string', 'size:2'],
-            'translations.*.title'     => ['required_with:translations', 'string', 'max:255'],
-            'translations.*.slug'      => ['required_with:translations', 'string', 'max:255'],
+            'translations.*.title'     => ['nullable', 'string', 'max:255'],
+            'translations.*.slug'      => ['nullable', 'string', 'max:255'],
             'translations.*.description' => ['nullable', 'string'],
         ];
     }

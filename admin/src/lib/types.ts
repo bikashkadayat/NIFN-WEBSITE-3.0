@@ -1,7 +1,7 @@
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
 export interface User {
-  id: string | number
+  id: string
   name: string
   email: string
   role: string
@@ -58,8 +58,9 @@ export interface Media {
   id: string
   file_name: string
   original_name: string
+  file_path?: string
   mime_type: string
-  size: number
+  file_size: number
   url: string
   thumbnail_url?: string
   alt_text?: string
@@ -70,7 +71,7 @@ export interface Media {
 // ─── Content ─────────────────────────────────────────────────────────────────
 
 export interface Content {
-  id: number
+  id: string
   slug: string
   portal_type: 'website' | 'developer'
   sort_order: number
@@ -121,7 +122,7 @@ export interface ContentFormData {
 // ─── News Category ───────────────────────────────────────────────────────────
 
 export interface NewsCategory {
-  id: number
+  id: string
   slug: string
   sort_order: number
   is_active: boolean
@@ -134,7 +135,7 @@ export interface NewsCategory {
 // ─── Tag ─────────────────────────────────────────────────────────────────────
 
 export interface Tag {
-  id: number
+  id: string
   slug: string
   usage_count?: number
   translations: Translation[]
@@ -145,7 +146,7 @@ export interface Tag {
 // ─── News ─────────────────────────────────────────────────────────────────────
 
 export interface News {
-  id: number
+  id: string
   slug: string
   is_published: boolean
   is_featured: boolean
@@ -164,8 +165,8 @@ export interface News {
 // ─── Gallery ─────────────────────────────────────────────────────────────────
 
 export interface GalleryImage {
-  id: number
-  gallery_id: number
+  id: string
+  gallery_id: string
   media_id: string
   media: Media
   caption_en?: string
@@ -177,7 +178,7 @@ export interface GalleryImage {
 }
 
 export interface Gallery {
-  id: number
+  id: string
   slug: string
   is_published: boolean
   event_date?: string | null
@@ -192,13 +193,13 @@ export interface Gallery {
 // ─── Banner ──────────────────────────────────────────────────────────────────
 
 export interface Banner {
-  id: number
-  background_image_id?: string | null
-  background_image?: Media | null
+  id: string
+  image_id?: string | null
+  image?: Media | null
   primary_button_link?: string | null
   secondary_button_link?: string | null
   text_alignment: 'left' | 'center' | 'right'
-  overlay_opacity: 'light' | 'medium' | 'dark'
+  overlay_opacity: number
   sort_order: number
   is_active: boolean
   translations: Translation[]
@@ -209,7 +210,7 @@ export interface Banner {
 // ─── Download ─────────────────────────────────────────────────────────────────
 
 export interface DownloadCategory {
-  id: number
+  id: string
   slug: string
   sort_order: number
   is_active: boolean
@@ -220,7 +221,7 @@ export interface DownloadCategory {
 }
 
 export interface Download {
-  id: number
+  id: string
   slug: string
   file_path?: string | null
   file_name?: string | null
@@ -241,14 +242,14 @@ export interface Download {
 // ─── Popup Notice ─────────────────────────────────────────────────────────────
 
 export interface PopupNotice {
-  id: number
-  type: 'info' | 'warning' | 'success' | 'announcement'
+  id: string
+  type: 'info' | 'warning' | 'success' | 'promotional'
   button_link?: string | null
   image_id?: string | null
   image?: Media | null
   start_date?: string | null
   end_date?: string | null
-  display_frequency: 'session' | 'daily' | 'always' | 'once'
+  display_frequency: 'once_session' | 'once_day' | 'always'
   is_active: boolean
   translations: Translation[]
   created_at: string
@@ -258,9 +259,9 @@ export interface PopupNotice {
 // ─── Menu ─────────────────────────────────────────────────────────────────────
 
 export interface MenuItem {
-  id: number
-  menu_id: number
-  parent_id?: number | null
+  id: string
+  menu_id: string
+  parent_id?: string | null
   url: string
   target: '_self' | '_blank'
   icon?: string | null
@@ -273,7 +274,7 @@ export interface MenuItem {
 }
 
 export interface Menu {
-  id: number
+  id: string
   name: string
   location: 'header' | 'footer'
   items?: MenuItem[]
@@ -292,7 +293,7 @@ export interface Setting {
 // ─── Contact Submission ───────────────────────────────────────────────────────
 
 export interface ContactSubmission {
-  id: number
+  id: string
   name: string
   email: string
   phone?: string | null
@@ -306,7 +307,7 @@ export interface ContactSubmission {
 // ─── Newsletter Subscriber ────────────────────────────────────────────────────
 
 export interface NewsletterSubscriber {
-  id: number
+  id: string
   email: string
   is_active: boolean
   created_at: string
@@ -335,7 +336,7 @@ export interface DeveloperRegistration {
 // ─── Activity Log ─────────────────────────────────────────────────────────────
 
 export interface ActivityLog {
-  id: number
+  id: string
   user_id?: number | null
   user?: User | null
   user_name?: string

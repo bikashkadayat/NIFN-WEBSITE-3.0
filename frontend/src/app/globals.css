@@ -89,3 +89,10 @@ body {
 
 .tiptap-toolbar button:hover { background: #e5e7eb; }
 .tiptap-toolbar button.is-active { background: #dbeafe; color: #2563eb; border-color: #bfdbfe; }
+@keyframes progress {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+.animate-progress {
+  animation: progress linear forwards;
+}

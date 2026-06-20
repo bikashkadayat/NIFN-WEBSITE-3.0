@@ -22,13 +22,15 @@ class GalleryImage extends Model
         'caption_en',
         'caption_ne',
         'sort_order',
+        'is_cover',
     ];
 
     protected $casts = [
         'gallery_id' => 'string',
-        'media_id' => 'string',
+        'media_id'   => 'string',
         'sort_order' => 'integer',
-        'id' => 'string',
+        'is_cover'   => 'boolean',
+        'id'         => 'string',
     ];
 
     public function gallery(): BelongsTo

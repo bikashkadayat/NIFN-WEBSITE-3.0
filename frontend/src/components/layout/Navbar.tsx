@@ -6,7 +6,23 @@ import { usePathname } from 'next/navigation'
 import { ChevronDown, Menu, X, ExternalLink } from 'lucide-react'
 import clsx from 'clsx'
 
-const NAV_ITEMS = [
+interface CmsMenuItem {
+  id: string
+  title: string
+  url: string
+  target: string
+  children?: CmsMenuItem[]
+}
+
+interface NavItem {
+  label: string
+  href: string
+  external?: boolean
+  desc?: string
+  children?: NavItem[]
+}
+
+const NAV_ITEMS: NavItem[] = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about', children: [
     { label: 'About NIFN', href: '/about', desc: 'Learn about our mission' },
@@ -24,12 +40,23 @@ const NAV_ITEMS = [
   { label: 'Contact', href: '/contact' },
 ]
 
-export function Navbar() {
+function cmsToNavItem(item: CmsMenuItem): NavItem {
+  return {
+    label: item.title,
+    href: item.url,
+    external: item.target === '_blank',
+    children: item.children?.length ? item.children.map(cmsToNavItem) : undefined,
+  }
+}
+
+export function Navbar({ cmsItems }: { cmsItems?: CmsMenuItem[] }) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [mobileDropdowns, setMobileDropdowns] = useState<Set<string>>(new Set())
   const [locale, setLocale] = useState('en')
+
+  const navItems: NavItem[] = cmsItems?.length ? cmsItems.map(cmsToNavItem) : NAV_ITEMS
 
   useEffect(() => {
     setMobileOpen(false)
@@ -93,7 +120,7 @@ export function Navbar() {
 
             {/* Desktop nav */}
             <nav className="hidden lg:flex items-center gap-1">
-              {NAV_ITEMS.map((item) => (
+              {navItems.map((item) => (
                 <div
                   key={item.label}
                   className="relative"
@@ -229,7 +256,7 @@ export function Navbar() {
           </div>
 
           <nav className="p-4 overflow-y-auto max-h-[calc(100vh-64px)]">
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <div key={item.label}>
                 {item.children ? (
                   <div className="mb-1">

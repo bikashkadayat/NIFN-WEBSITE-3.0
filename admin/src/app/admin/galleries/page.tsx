@@ -22,7 +22,7 @@ type AnyRecord = Record<string, unknown>
 export default function GalleriesPage() {
   const router = useRouter()
   const [page, setPage] = useState(1)
-  const [deleteId, setDeleteId] = useState<number | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const galleriesQuery = useGalleries({ page })
   const deleteGallery = useDeleteGallery()

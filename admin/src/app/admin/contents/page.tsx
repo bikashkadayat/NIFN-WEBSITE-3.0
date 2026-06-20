@@ -24,7 +24,7 @@ export default function ContentsPage() {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [portalFilter, setPortalFilter] = useState('')
-  const [deleteId, setDeleteId] = useState<number | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const { data, isLoading } = useContents({ page, search, portal_type: portalFilter || undefined })
   const deleteMutation = useDeleteContent()

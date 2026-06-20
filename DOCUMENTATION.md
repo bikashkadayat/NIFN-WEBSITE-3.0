@@ -406,15 +406,11 @@ Each translatable model has a corresponding `{model}_translations` table:
 - `gallery_translations` - gallery titles/descriptions
 - `banner_translations` - banner text
 - `download_translations` - download titles/descriptions
-
-### Translation Tables
-
-Each translatable model has a corresponding `{model}_translations` table:
-- `content_translations` - title, body, excerpt, SEO fields
-- `news_translations` - localized news content
-- `gallery_translations` - gallery titles/descriptions
-- `banner_translations` - banner text
-- `download_translations` - download titles/descriptions
+- `developer_page_translations` - dev portal page content
+- `developer_sdk_translations` - SDK descriptions
+- `developer_changelog_translations` - changelog entries
+- `menu_item_translations` - menu item labels
+- `popup_notice_translations` - popup text
 
 ---
 
@@ -481,6 +477,27 @@ Each translatable model has a corresponding `{model}_translations` table:
 - Triggers cache invalidation after content changes
 - Calls Next.js revalidation endpoints
 - Supports multiple portal types (website, admin, developer)
+
+## Most Important Files
+
+| File | Purpose |
+|------|---------|
+| `backend-laravel-api/routes/api.php` | All API route definitions |
+| `backend-laravel-api/app/Models/User.php` | User model with Sanctum |
+| `backend-laravel-api/app/Http/Controllers/Api/V1/AuthController.php` | Authentication logic |
+| `backend-laravel-api/app/Http/Controllers/Api/V1/Admin/ContentController.php` | Content CRUD operations |
+| `frontend/src/app/page.tsx` | Homepage with parallel data fetching |
+| `frontend/src/lib/api.ts` | API client for frontend |
+| `frontend/src/lib/content-fetch.ts` | Content fetching utility |
+| `admin/src/app/login/page.tsx` | Admin login page |
+| `admin/src/app/admin/page.tsx` | Admin dashboard |
+| `admin/src/lib/api.ts` | Full admin API client |
+| `admin/src/providers/auth-provider.tsx` | Auth context provider |
+| `developer-portal/src/app/page.tsx` | Developer portal homepage |
+| `developer-portal/src/lib/api.ts` | Developer API client |
+| `docker-compose.yml` | Service orchestration |
+| `nginx/default.conf` | Reverse proxy configuration |
+| `scripts/health-check.sh` | System health verification |
 
 ### API Controllers (Most Important)
 
@@ -559,5 +576,60 @@ NEXT_PUBLIC_SITE_URL=https://nifn.org.np
    - Check database credentials in `.env`
 
 5. **Build Failures**
-   - Clear Next.js cache: `rm -rf .next`
-   - Clear Laravel cache: `php artisan config:clear`
+    - Clear Next.js cache: `rm -rf .next`
+    - Clear Laravel cache: `php artisan config:clear`
+
+---
+
+## Scripts
+
+### Health Check (`scripts/health-check.sh`)
+
+Verifies system health in 4 steps:
+
+1. **Docker Containers** - Checks all 6 services are running
+2. **API Endpoints** - Tests HTTP responses for all key URLs  
+3. **Database** - Confirms PostgreSQL connectivity
+4. **Storage** - Validates storage symlink exists
+
+**Usage:**
+```bash
+BASE_URL=http://localhost bash scripts/health-check.sh
+```
+
+**Exit codes:** 0 on success, non-zero on failures
+
+---
+
+## Environment Variables
+
+### Backend (.env)
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `APP_ENV` | Environment (local/production) | production |
+| `APP_DEBUG` | Debug mode | false |
+| `APP_URL` | API base URL | https://api.nifn.org.np |
+| `DB_CONNECTION` | Database driver | pgsql |
+| `DB_HOST` | Database host | postgres |
+| `DB_PORT` | Database port | 5432 |
+| `DB_DATABASE` | Database name | nifn |
+| `DB_USERNAME` | Database user | nifn |
+| `DB_PASSWORD` | Database password | nifn_secret |
+| `SESSION_DRIVER` | Session storage | file |
+| `FILESYSTEM_DISK` | File storage disk | public |
+| `CACHE_STORE` | Cache driver | file |
+| `QUEUE_CONNECTION` | Queue driver | sync |
+
+### Frontend (.env.local)
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_API_URL` | API endpoint | http://localhost:8000/api |
+| `NEXT_PUBLIC_SITE_URL` | Site URL | http://localhost:3007 |
+
+---
+
+## License
+
+MIT License - See LICENSE file for details.

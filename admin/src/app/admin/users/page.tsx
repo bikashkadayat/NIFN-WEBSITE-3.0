@@ -42,7 +42,7 @@ function UserAvatar({ name }: { name: string }) {
 export default function UsersPage() {
   const router = useRouter()
   const [page, setPage] = useState(1)
-  const [deleteId, setDeleteId] = useState<string | number | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const usersQuery = useUsers({ page })
   const deleteUser = useDeleteUser()

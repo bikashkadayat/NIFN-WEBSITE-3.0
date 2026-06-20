@@ -16,7 +16,7 @@ interface GalleryDetailPageProps {
 
 async function fetchGallery(slug: string): Promise<Gallery | null> {
   try {
-    const res = await fetch(`${API_URL}/v1/galleries/${slug}`, { next: { revalidate: 60 } })
+    const res = await fetch(`${API_URL}/v1/galleries/${slug}`, { next: { revalidate: 60, tags: ['galleries', `gallery-${slug}`] } })
     if (!res.ok) return null
     const json = await res.json()
     return json?.data || null

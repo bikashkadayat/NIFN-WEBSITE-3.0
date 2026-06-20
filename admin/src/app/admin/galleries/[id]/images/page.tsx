@@ -23,8 +23,8 @@ export default function GalleryImagesPage({ params }: { params: Promise<{ id: st
   const updateImage = useUpdateGalleryImage()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [deleteImageId, setDeleteImageId] = useState<number | null>(null)
-  const [captions, setCaptions] = useState<Record<number, { en: string; ne: string }>>({})
+  const [deleteImageId, setDeleteImageId] = useState<string | null>(null)
+  const [captions, setCaptions] = useState<Record<string, { en: string; ne: string }>>({})
 
   const gallery = galleryQuery.data
   const images: GalleryImage[] = imagesQuery.data ?? []
@@ -41,12 +41,12 @@ export default function GalleryImagesPage({ params }: { params: Promise<{ id: st
     if (!files || files.length === 0) return
     const formData = new FormData()
     Array.from(files).forEach((file) => formData.append("images[]", file))
-    await uploadImages.mutateAsync({ galleryId: Number(id), formData })
+    await uploadImages.mutateAsync({ galleryId: id, formData })
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
 
-  const handleSetCover = async (imageId: number) => {
-    await updateImage.mutateAsync({ galleryId: Number(id), imageId, data: { is_cover: true } })
+  const handleSetCover = async (imageId: string) => {
+    await updateImage.mutateAsync({ galleryId: id, imageId, data: { is_cover: true } })
   }
 
   const handleCaptionBlur = async (img: GalleryImage) => {
@@ -54,7 +54,7 @@ export default function GalleryImagesPage({ params }: { params: Promise<{ id: st
     const ne = getCaptionNe(img)
     if (en !== img.caption_en || ne !== img.caption_ne) {
       await updateImage.mutateAsync({
-        galleryId: Number(id),
+        galleryId: id,
         imageId: img.id,
         data: { caption_en: en, caption_ne: ne },
       })
@@ -63,7 +63,7 @@ export default function GalleryImagesPage({ params }: { params: Promise<{ id: st
 
   const handleDelete = async () => {
     if (!deleteImageId) return
-    await deleteImage.mutateAsync({ galleryId: Number(id), imageId: deleteImageId })
+    await deleteImage.mutateAsync({ galleryId: id, imageId: deleteImageId })
     setDeleteImageId(null)
   }
 

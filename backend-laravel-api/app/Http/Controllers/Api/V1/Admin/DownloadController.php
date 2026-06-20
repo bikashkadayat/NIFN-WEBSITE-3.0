@@ -40,6 +40,7 @@ class DownloadController extends Controller
             ]);
 
             foreach ($request->translations as $trans) {
+                if (empty(trim($trans['title'] ?? ''))) continue;
                 $download->translations()->create([
                     'locale'      => $trans['locale'],
                     'title'       => $trans['title'],
@@ -67,7 +68,13 @@ class DownloadController extends Controller
     {
         $download = Download::findOrFail($id);
 
-        DB::transaction(function () use ($request, $download) {
+        // Decode translations if sent as JSON string via FormData
+        $rawTranslations = $request->input('translations');
+        $translations = is_string($rawTranslations)
+            ? (json_decode($rawTranslations, true) ?? [])
+            : ($rawTranslations ?? []);
+
+        DB::transaction(function () use ($request, $download, $translations) {
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
                 $path = $file->store('downloads', 'public');
@@ -86,7 +93,8 @@ class DownloadController extends Controller
                 'is_active'    => $request->has('is_active') ? $request->boolean('is_active') : $download->is_active,
             ], fn ($v) => $v !== null));
 
-            foreach ($request->translations ?? [] as $trans) {
+            foreach ($translations as $trans) {
+                if (empty(trim($trans['title'] ?? ''))) continue;
                 $download->translations()->updateOrCreate(
                     ['locale' => $trans['locale']],
                     [

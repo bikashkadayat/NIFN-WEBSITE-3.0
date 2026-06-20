@@ -22,7 +22,7 @@ class UpdateNewsRequest extends FormRequest
             'translations'             => ['sometimes', 'array'],
             'translations.*.locale'    => ['required_with:translations', 'string', 'size:2'],
             'translations.*.title'     => ['required_with:translations', 'string', 'max:255'],
-            'translations.*.slug'      => ['required_with:translations', 'string', 'max:255'],
+            'translations.*.slug'      => ['nullable', 'string', 'max:255'],
             'translations.*.excerpt'   => ['nullable', 'string'],
             'translations.*.body'      => ['nullable', 'string'],
             'translations.*.seo_title' => ['nullable', 'string', 'max:255'],

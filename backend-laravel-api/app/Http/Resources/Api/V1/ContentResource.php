@@ -18,7 +18,7 @@ class ContentResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $translation?->title,
-            'slug' => $translation?->slug,
+            'slug' => $this->slug,
             'body' => $translation?->body,
             'excerpt' => $translation?->excerpt,
             'featured_image_url' => $this->featuredImage?->url,

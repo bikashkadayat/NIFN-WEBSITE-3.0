@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { Plus, Edit, Trash2, GripVertical } from "lucide-react"
 import {
   useMenus,
@@ -29,7 +29,7 @@ interface ItemForm {
   title_en: string
   title_ne: string
   url: string
-  parent_id: number | null
+  parent_id: string | null
   target: "_self" | "_blank"
   sort_order: number
   is_active: boolean
@@ -52,8 +52,8 @@ function MenuTab({ menu }: { menu: Menu }) {
   const deleteItem = useDeleteMenuItem()
 
   const [modalOpen, setModalOpen] = useState(false)
-  const [editingId, setEditingId] = useState<number | null>(null)
-  const [deleteId, setDeleteId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
   const [form, setForm] = useState<ItemForm>(emptyItemForm())
 
   const items: MenuItem[] = itemsQuery.data ?? []
@@ -212,7 +212,7 @@ function MenuTab({ menu }: { menu: Menu }) {
             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Parent Item</label>
             <Select
               value={form.parent_id !== null ? String(form.parent_id) : ""}
-              onChange={(v) => setForm((p) => ({ ...p, parent_id: v ? Number(v) : null }))}
+              onChange={(e) => setForm((p) => ({ ...p, parent_id: (e as React.ChangeEvent<HTMLSelectElement>).target.value || null }))}
               options={parentOptions}
             />
           </div>

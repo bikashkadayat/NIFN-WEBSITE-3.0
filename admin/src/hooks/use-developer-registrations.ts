@@ -18,7 +18,7 @@ export function useDeveloperRegistration(id: string | null | undefined) {
     queryKey: ['developer-registration', id],
     queryFn: async () => {
       if (!id) return null
-      const res = await developerRegistrationsApi.get(id) as { data: DeveloperRegistration }
+      const res = await developerRegistrationsApi.get(String(id)) as { data: DeveloperRegistration }
       return res.data
     },
     enabled: !!id,
@@ -81,7 +81,7 @@ export function useSendDeveloperCredentials() {
 export function useDeleteDeveloperRegistration() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => developerRegistrationsApi.delete(id),
+    mutationFn: (id: string) => developerRegistrationsApi.delete(String(id)),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['developer-registrations'] })
       qc.invalidateQueries({ queryKey: ['developer-registration-unread-count'] })

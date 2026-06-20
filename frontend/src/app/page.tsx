@@ -17,7 +17,7 @@ interface SettingMap {
 
 async function fetchBanners(): Promise<Banner[]> {
   try {
-    const res = await fetch(`${API_URL}/v1/banners`, { next: { revalidate: 60 } })
+    const res = await fetch(`${API_URL}/v1/banners`, { next: { revalidate: 60, tags: ['banners'] } })
     const json = await res.json()
     return json?.data || []
   } catch {
@@ -27,7 +27,7 @@ async function fetchBanners(): Promise<Banner[]> {
 
 async function fetchFeaturedNews(): Promise<any[]> {
   try {
-    const res = await fetch(`${API_URL}/v1/news?featured=1&limit=3`, { next: { revalidate: 60 } })
+    const res = await fetch(`${API_URL}/v1/news?featured=1&limit=3`, { next: { revalidate: 60, tags: ['news'] } })
     const json = await res.json()
     return json?.data || []
   } catch {

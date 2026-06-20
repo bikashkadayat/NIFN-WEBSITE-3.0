@@ -13,10 +13,10 @@ export function useBanners(params?: Record<string, unknown>) {
   })
 }
 
-export function useBanner(id: number | string) {
+export function useBanner(id: string) {
   return useQuery({
     queryKey: ['banner', id],
-    queryFn: async () => { const res = await bannersApi.get(Number(id)) as { data: Banner }; return res.data },
+    queryFn: async () => { const res = await bannersApi.get(String(id)) as { data: Banner }; return res.data },
     enabled: !!id,
   })
 }
@@ -33,7 +33,7 @@ export function useCreateBanner() {
 export function useUpdateBanner() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: unknown }) => bannersApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: unknown }) => bannersApi.update(id, data),
     onSuccess: (res, { id }) => {
       qc.setQueryData(['banner', id], (res as { data: Banner }).data)
       qc.invalidateQueries({ queryKey: ['banners'] })
@@ -46,7 +46,7 @@ export function useUpdateBanner() {
 export function useDeleteBanner() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => bannersApi.delete(id),
+    mutationFn: (id: string) => bannersApi.delete(String(id)),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['banners'] }); toast.success('Banner deleted') },
     onError: () => toast.error('Failed to delete'),
   })

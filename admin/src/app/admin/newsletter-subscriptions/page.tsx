@@ -24,8 +24,8 @@ type AnyRecord = Record<string, unknown>
 
 export default function NewsletterSubscriptionsPage() {
   const [page, setPage] = useState(1)
-  const [deleteId, setDeleteId] = useState<number | null>(null)
-  const [unsubscribeId, setUnsubscribeId] = useState<number | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [unsubscribeId, setUnsubscribeId] = useState<string | null>(null)
   const [exporting, setExporting] = useState(false)
 
   const subscribersQuery = useNewsletterSubscribers({ page })

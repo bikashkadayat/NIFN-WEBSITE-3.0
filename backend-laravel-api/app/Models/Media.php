@@ -26,6 +26,8 @@ class Media extends Model
         'alt_text',
     ];
 
+    protected $appends = ['url', 'file_name'];
+
     protected $casts = [
         'original_width' => 'integer',
         'original_height' => 'integer',
@@ -35,7 +37,12 @@ class Media extends Model
 
     public function getUrlAttribute(): string
     {
-        return config('app.url') . '/storage/' . $this->file_path;
+        return rtrim(config('app.url'), '/') . '/storage/' . ltrim($this->file_path ?? '', '/');
+    }
+
+    public function getFileNameAttribute(): string
+    {
+        return $this->original_name ?? basename($this->file_path ?? '') ?? '';
     }
 
     public function translation(string $locale = 'en')

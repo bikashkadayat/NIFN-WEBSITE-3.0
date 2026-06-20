@@ -18,12 +18,12 @@ export function formatRelativeDate(date: string | Date): string {
   return formatDistanceToNow(dateObj, { addSuffix: true });
 }
 
-export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return "0 Bytes";
-  const units = ["Bytes", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  const size = (bytes / Math.pow(1024, i)).toFixed(2);
-  return `${size} ${units[i]}`;
+export function formatFileSize(bytes: number | null | undefined): string {
+  const n = Number(bytes)
+  if (!n || isNaN(n) || n <= 0) return "—";
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.min(Math.floor(Math.log(n) / Math.log(1024)), units.length - 1);
+  return `${(n / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
 }
 
 export function getStatusColor(status: string): string {

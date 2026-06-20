@@ -38,6 +38,7 @@ RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache \
 
 RUN mkdir -p /etc/nginx/http.d
 COPY nginx/backend.conf /etc/nginx/http.d/default.conf
+COPY php/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh

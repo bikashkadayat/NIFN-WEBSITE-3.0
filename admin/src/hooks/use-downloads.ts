@@ -13,10 +13,10 @@ export function useDownloads(params?: Record<string, unknown>) {
   })
 }
 
-export function useDownload(id: number | string) {
+export function useDownload(id: string) {
   return useQuery({
     queryKey: ['download', id],
-    queryFn: async () => { const res = await downloadsApi.get(Number(id)) as { data: Download }; return res.data },
+    queryFn: async () => { const res = await downloadsApi.get(String(id)) as { data: Download }; return res.data },
     enabled: !!id,
   })
 }
@@ -33,7 +33,7 @@ export function useCreateDownload() {
 export function useUpdateDownload() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: FormData | unknown }) => downloadsApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: FormData | unknown }) => downloadsApi.update(id, data),
     onSuccess: (res, { id }) => {
       qc.setQueryData(['download', id], (res as { data: Download }).data)
       qc.invalidateQueries({ queryKey: ['downloads'] })
@@ -46,7 +46,7 @@ export function useUpdateDownload() {
 export function useDeleteDownload() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => downloadsApi.delete(id),
+    mutationFn: (id: string) => downloadsApi.delete(String(id)),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['downloads'] }); toast.success('Download deleted') },
     onError: () => toast.error('Failed to delete'),
   })

@@ -10,7 +10,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
 
 async function fetchGalleries(): Promise<Gallery[]> {
   try {
-    const res = await fetch(`${API_URL}/v1/galleries`, { next: { revalidate: 60 } })
+    const res = await fetch(`${API_URL}/v1/galleries`, { next: { revalidate: 60, tags: ["galleries"] } })
     const json = await res.json()
     return (json?.data || []).map((g: any) => ({
       ...g,

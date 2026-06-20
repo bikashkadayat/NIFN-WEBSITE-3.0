@@ -48,7 +48,7 @@ class ContentController extends Controller
             return $content;
         });
 
-        RevalidationService::trigger($content->portal_type ?? 'website', $content->slug);
+        RevalidationService::trigger($content->portal_type ?? 'website', 'content', $content->slug);
 
         return response()->json([
             'data'    => $content->load('translations'),
@@ -91,7 +91,7 @@ class ContentController extends Controller
             }
         });
 
-        RevalidationService::trigger($content->portal_type ?? 'website', $content->slug);
+        RevalidationService::trigger($content->portal_type ?? 'website', 'content', $content->slug);
 
         return response()->json([
             'data'    => $content->fresh('translations'),
@@ -106,7 +106,7 @@ class ContentController extends Controller
         $portalType = $content->portal_type;
         $content->delete();
 
-        RevalidationService::trigger($portalType ?? 'website', $slug);
+        RevalidationService::trigger($portalType ?? 'website', 'content', $slug);
 
         return response()->json(['message' => 'Content deleted.']);
     }

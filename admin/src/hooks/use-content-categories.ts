@@ -17,7 +17,7 @@ export function useContentCategory(id: string) {
   return useQuery({
     queryKey: ['content-category', id],
     queryFn: async () => {
-      const res = await contentCategoriesApi.get(id) as { data: ContentCategory }
+      const res = await contentCategoriesApi.get(String(id)) as { data: ContentCategory }
       return res.data
     },
     enabled: !!id,
@@ -45,7 +45,7 @@ export function useUpdateContentCategory() {
 export function useDeleteContentCategory() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => contentCategoriesApi.delete(id),
+    mutationFn: (id: string) => contentCategoriesApi.delete(String(id)),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['content-categories'] }); toast.success('Category deleted') },
     onError: () => toast.error('Failed to delete'),
   })

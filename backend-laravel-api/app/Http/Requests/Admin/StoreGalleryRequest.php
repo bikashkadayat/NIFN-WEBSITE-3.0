@@ -16,9 +16,10 @@ class StoreGalleryRequest extends FormRequest
             'sort_order'               => ['nullable', 'integer', 'min:0'],
             'event_date'               => ['nullable', 'date'],
             'translations'             => ['required', 'array'],
+            'slug'                     => ['nullable', 'string', 'max:255'],
             'translations.*.locale'    => ['required', 'string', 'size:2'],
-            'translations.*.title'     => ['required', 'string', 'max:255'],
-            'translations.*.slug'      => ['required', 'string', 'max:255'],
+            'translations.*.title'     => ['nullable', 'string', 'max:255'],
+            'translations.*.slug'      => ['nullable', 'string', 'max:255'],
             'translations.*.description' => ['nullable', 'string'],
         ];
     }

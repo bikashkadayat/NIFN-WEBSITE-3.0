@@ -117,7 +117,7 @@ export function DeveloperRegistrationForm() {
   useEffect(() => {
     if (typeof window === 'undefined' || formState === 'success') return
     const t = setTimeout(() => {
-      const { terms, hp_field, ...rest } = formData
+      const rest = { contact_name: formData.contact_name, email: formData.email, organization_name: formData.organization_name, organization_type: formData.organization_type, use_case: formData.use_case }
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify(rest))
       } catch {

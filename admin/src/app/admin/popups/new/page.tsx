@@ -30,14 +30,13 @@ const typeOptions = [
   { value: "info", label: "Info" },
   { value: "warning", label: "Warning" },
   { value: "success", label: "Success" },
-  { value: "announcement", label: "Announcement" },
+  { value: "promotional", label: "Promotional" },
 ]
 
 const frequencyOptions = [
-  { value: "session", label: "Once per session" },
-  { value: "daily", label: "Once per day" },
+  { value: "once_session", label: "Once per session" },
+  { value: "once_day", label: "Once per day" },
   { value: "always", label: "Always" },
-  { value: "once", label: "Once ever" },
 ]
 
 export default function NewPopupPage() {
@@ -50,10 +49,10 @@ export default function NewPopupPage() {
   })
   const [imageId, setImageId] = useState<string | null>(null)
   const [buttonLink, setButtonLink] = useState("")
-  const [type, setType] = useState<"info" | "warning" | "success" | "announcement">("info")
+  const [type, setType] = useState<"info" | "warning" | "success" | "promotional">("info")
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
-  const [displayFrequency, setDisplayFrequency] = useState<"session" | "daily" | "always" | "once">("session")
+  const [displayFrequency, setDisplayFrequency] = useState<"once_session" | "once_day" | "always">("once_session")
   const [isActive, setIsActive] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
@@ -68,6 +67,10 @@ export default function NewPopupPage() {
     e.preventDefault()
     setSubmitting(true)
     try {
+      const translationsPayload = [
+        { locale: "en", ...translations.en },
+        ...(translations.ne.title.trim() ? [{ locale: "ne", ...translations.ne }] : []),
+      ]
       await createPopup.mutateAsync({
         type,
         button_link: buttonLink || null,
@@ -76,10 +79,7 @@ export default function NewPopupPage() {
         end_date: endDate || null,
         display_frequency: displayFrequency,
         is_active: isActive,
-        translations: [
-          { locale: "en", ...translations.en },
-          { locale: "ne", ...translations.ne },
-        ],
+        translations: translationsPayload,
       })
       router.push("/admin/popups")
     } finally {
@@ -160,7 +160,7 @@ export default function NewPopupPage() {
                 label="Type"
                 options={typeOptions}
                 value={type}
-                onChange={(e) => setType(e.target.value as typeof type)}
+                onChange={(e) => setType(e.target.value as "info" | "warning" | "success" | "promotional")}
               />
               <Select
                 label="Display Frequency"

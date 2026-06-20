@@ -13,12 +13,22 @@ export function useGalleries(params?: Record<string, unknown>) {
   })
 }
 
-export function useGallery(id: number | string) {
+export function useGallery(id: string) {
   return useQuery({
     queryKey: ['gallery', id],
-    queryFn: async () => { const res = await galleriesApi.get(Number(id)) as { data: Gallery }; return res.data },
+    queryFn: async () => { const res = await galleriesApi.get(String(id)) as { data: Gallery }; return res.data },
     enabled: !!id,
   })
+}
+
+function extractErrorMessage(err: unknown, fallback: string): string {
+  const e = err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } }
+  const errors = e.response?.data?.errors
+  if (errors) {
+    const first = Object.values(errors)[0]
+    return Array.isArray(first) ? first[0] : String(first)
+  }
+  return e.response?.data?.message || fallback
 }
 
 export function useCreateGallery() {
@@ -26,37 +36,37 @@ export function useCreateGallery() {
   return useMutation({
     mutationFn: (data: unknown) => galleriesApi.create(data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['galleries'] }); toast.success('Gallery created') },
-    onError: (err: { response?: { data?: { message?: string } } }) => { toast.error(err.response?.data?.message || 'Failed') },
+    onError: (err) => { toast.error(extractErrorMessage(err, 'Failed to create gallery')) },
   })
 }
 
 export function useUpdateGallery() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: unknown }) => galleriesApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: unknown }) => galleriesApi.update(id, data),
     onSuccess: (res, { id }) => {
       qc.setQueryData(['gallery', id], (res as { data: Gallery }).data)
       qc.invalidateQueries({ queryKey: ['galleries'] })
       toast.success('Gallery updated')
     },
-    onError: (err: { response?: { data?: { message?: string } } }) => { toast.error(err.response?.data?.message || 'Failed') },
+    onError: (err) => { toast.error(extractErrorMessage(err, 'Failed to update gallery')) },
   })
 }
 
 export function useDeleteGallery() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => galleriesApi.delete(id),
+    mutationFn: (id: string) => galleriesApi.delete(String(id)),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['galleries'] }); toast.success('Gallery deleted') },
     onError: () => toast.error('Failed to delete'),
   })
 }
 
-export function useGalleryImages(galleryId: number | string) {
+export function useGalleryImages(galleryId: string) {
   return useQuery({
     queryKey: ['gallery-images', galleryId],
     queryFn: async () => {
-      const res = await galleriesApi.getImages(Number(galleryId)) as { data: GalleryImage[] }
+      const res = await galleriesApi.getImages(galleryId) as { data: GalleryImage[] }
       return res.data
     },
     enabled: !!galleryId,
@@ -66,7 +76,7 @@ export function useGalleryImages(galleryId: number | string) {
 export function useUploadGalleryImages() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ galleryId, formData }: { galleryId: number; formData: FormData }) =>
+    mutationFn: ({ galleryId, formData }: { galleryId: string; formData: FormData }) =>
       galleriesApi.uploadImages(galleryId, formData),
     onSuccess: (_, { galleryId }) => {
       qc.invalidateQueries({ queryKey: ['gallery-images', galleryId] })
@@ -79,7 +89,7 @@ export function useUploadGalleryImages() {
 export function useDeleteGalleryImage() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ galleryId, imageId }: { galleryId: number; imageId: number }) =>
+    mutationFn: ({ galleryId, imageId }: { galleryId: string; imageId: string }) =>
       galleriesApi.deleteImage(galleryId, imageId),
     onSuccess: (_, { galleryId }) => {
       qc.invalidateQueries({ queryKey: ['gallery-images', galleryId] })
@@ -92,7 +102,7 @@ export function useDeleteGalleryImage() {
 export function useReorderGalleryImages() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ galleryId, order }: { galleryId: number; order: { id: number; sort_order: number }[] }) =>
+    mutationFn: ({ galleryId, order }: { galleryId: string; order: { id: string; sort_order: number }[] }) =>
       galleriesApi.reorderImages(galleryId, order),
     onSuccess: (_, { galleryId }) => {
       qc.invalidateQueries({ queryKey: ['gallery-images', galleryId] })
@@ -104,7 +114,7 @@ export function useReorderGalleryImages() {
 export function useUpdateGalleryImage() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ galleryId, imageId, data }: { galleryId: number; imageId: number; data: unknown }) =>
+    mutationFn: ({ galleryId, imageId, data }: { galleryId: string; imageId: string; data: unknown }) =>
       galleriesApi.updateImage(galleryId, imageId, data),
     onSuccess: (_, { galleryId }) => {
       qc.invalidateQueries({ queryKey: ['gallery-images', galleryId] })

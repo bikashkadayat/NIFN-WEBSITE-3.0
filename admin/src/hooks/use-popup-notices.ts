@@ -13,10 +13,10 @@ export function usePopupNotices(params?: Record<string, unknown>) {
   })
 }
 
-export function usePopupNotice(id: number | string) {
+export function usePopupNotice(id: string) {
   return useQuery({
     queryKey: ['popup-notice', id],
-    queryFn: async () => { const res = await popupNoticesApi.get(Number(id)) as { data: PopupNotice }; return res.data },
+    queryFn: async () => { const res = await popupNoticesApi.get(String(id)) as { data: PopupNotice }; return res.data },
     enabled: !!id,
   })
 }
@@ -33,7 +33,7 @@ export function useCreatePopupNotice() {
 export function useUpdatePopupNotice() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: unknown }) => popupNoticesApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: unknown }) => popupNoticesApi.update(id, data),
     onSuccess: (res, { id }) => {
       qc.setQueryData(['popup-notice', id], (res as { data: PopupNotice }).data)
       qc.invalidateQueries({ queryKey: ['popup-notices'] })
@@ -46,7 +46,7 @@ export function useUpdatePopupNotice() {
 export function useDeletePopupNotice() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => popupNoticesApi.delete(id),
+    mutationFn: (id: string) => popupNoticesApi.delete(String(id)),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['popup-notices'] }); toast.success('Popup notice deleted') },
     onError: () => toast.error('Failed to delete'),
   })

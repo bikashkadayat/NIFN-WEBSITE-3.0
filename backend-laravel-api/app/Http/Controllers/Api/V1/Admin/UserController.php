@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,13 +21,27 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+    private function resolveRoleId(Request $request): ?string
+    {
+        if ($request->filled('role_id')) {
+            return $request->role_id;
+        }
+        if ($request->filled('role')) {
+            // Frontend sends slug with underscores; DB stores with hyphens
+            $slug = str_replace('_', '-', $request->role);
+            return Role::where('slug', $slug)->value('id');
+        }
+        return null;
+    }
+
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8'],
-            'role_id'  => ['nullable', 'uuid', 'exists:roles,id'],
+            'name'      => ['required', 'string', 'max:255'],
+            'email'     => ['required', 'email', 'unique:users,email'],
+            'password'  => ['required', 'string', 'min:8'],
+            'role'      => ['nullable', 'string'],
+            'role_id'   => ['nullable', 'uuid', 'exists:roles,id'],
             'is_active' => ['boolean'],
         ]);
 
@@ -34,7 +49,7 @@ class UserController extends Controller
             'name'      => $request->name,
             'email'     => $request->email,
             'password'  => Hash::make($request->password),
-            'role_id'   => $request->role_id,
+            'role_id'   => $this->resolveRoleId($request),
             'is_active' => $request->boolean('is_active', true),
         ]);
 
@@ -56,14 +71,19 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'name'     => ['sometimes', 'string', 'max:255'],
-            'email'    => ['sometimes', 'email', Rule::unique('users', 'email')->ignore($id)],
-            'password' => ['sometimes', 'string', 'min:8'],
-            'role_id'  => ['nullable', 'uuid', 'exists:roles,id'],
+            'name'      => ['sometimes', 'string', 'max:255'],
+            'email'     => ['sometimes', 'email', Rule::unique('users', 'email')->ignore($id)],
+            'password'  => ['sometimes', 'string', 'min:8'],
+            'role'      => ['nullable', 'string'],
+            'role_id'   => ['nullable', 'uuid', 'exists:roles,id'],
             'is_active' => ['boolean'],
         ]);
 
-        $data = array_filter($request->only(['name', 'email', 'role_id', 'is_active']));
+        $data = array_filter($request->only(['name', 'email', 'is_active']));
+        $resolvedRoleId = $this->resolveRoleId($request);
+        if ($resolvedRoleId !== null) {
+            $data['role_id'] = $resolvedRoleId;
+        }
 
         if ($request->has('password')) {
             $data['password'] = Hash::make($request->password);

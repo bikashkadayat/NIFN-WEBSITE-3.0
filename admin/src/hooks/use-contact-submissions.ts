@@ -10,10 +10,10 @@ export function useContactSubmissions(params?: Record<string, unknown>) {
   })
 }
 
-export function useContactSubmission(id: number | string) {
+export function useContactSubmission(id: string) {
   return useQuery({
     queryKey: ['contact-submission', id],
-    queryFn: async () => { const res = await contactSubmissionsApi.get(Number(id)) as { data: ContactSubmission }; return res.data },
+    queryFn: async () => { const res = await contactSubmissionsApi.get(String(id)) as { data: ContactSubmission }; return res.data },
     enabled: !!id,
   })
 }
@@ -21,7 +21,7 @@ export function useContactSubmission(id: number | string) {
 export function useMarkContactRead() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => contactSubmissionsApi.markRead(id),
+    mutationFn: (id: string) => contactSubmissionsApi.markRead(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['contact-submissions'] }); toast.success('Marked as read') },
     onError: () => toast.error('Failed'),
   })
@@ -30,7 +30,7 @@ export function useMarkContactRead() {
 export function useDeleteContactSubmission() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => contactSubmissionsApi.delete(id),
+    mutationFn: (id: string) => contactSubmissionsApi.delete(String(id)),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['contact-submissions'] }); toast.success('Deleted') },
     onError: () => toast.error('Failed to delete'),
   })

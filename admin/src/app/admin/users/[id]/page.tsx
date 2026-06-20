@@ -70,7 +70,7 @@ export default function UserEditPage({ params }: { params: Promise<{ id: string 
       payload.password = form.password
       payload.password_confirmation = form.password_confirmation
     }
-    await updateUser.mutateAsync({ id: Number(id), data: payload })
+    await updateUser.mutateAsync({ id: id, data: payload })
     router.push("/admin/users")
   }
 

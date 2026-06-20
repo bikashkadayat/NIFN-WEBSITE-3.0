@@ -13,11 +13,11 @@ export function useNewsCategories(params?: Record<string, unknown>) {
   })
 }
 
-export function useNewsCategory(id: number | string) {
+export function useNewsCategory(id: string) {
   return useQuery({
     queryKey: ['news-category', id],
     queryFn: async () => {
-      const res = await newsCategoriesApi.get(Number(id)) as { data: NewsCategory }
+      const res = await newsCategoriesApi.get(String(id)) as { data: NewsCategory }
       return res.data
     },
     enabled: !!id,
@@ -36,7 +36,7 @@ export function useCreateNewsCategory() {
 export function useUpdateNewsCategory() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: unknown }) => newsCategoriesApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: unknown }) => newsCategoriesApi.update(id, data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['news-categories'] }); toast.success('Category updated') },
     onError: (err: { response?: { data?: { message?: string } } }) => { toast.error(err.response?.data?.message || 'Failed') },
   })
@@ -45,7 +45,7 @@ export function useUpdateNewsCategory() {
 export function useDeleteNewsCategory() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => newsCategoriesApi.delete(id),
+    mutationFn: (id: string) => newsCategoriesApi.delete(String(id)),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['news-categories'] }); toast.success('Category deleted') },
     onError: () => toast.error('Failed to delete'),
   })

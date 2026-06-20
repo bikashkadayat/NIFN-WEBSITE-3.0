@@ -19,7 +19,7 @@ interface NewsDetailPageProps {
 
 async function fetchNewsDetail(slug: string): Promise<News | null> {
   try {
-    const res = await fetch(`${API_URL}/v1/news/${slug}`, { next: { revalidate: 60 } })
+    const res = await fetch(`${API_URL}/v1/news/${slug}`, { next: { revalidate: 60, tags: ['news', `news-${slug}`] } })
     if (!res.ok) return null
     const json = await res.json()
     return json?.data || null
@@ -32,7 +32,7 @@ async function fetchRelatedNews(categorySlug: string, currentId: string): Promis
   try {
     const res = await fetch(
       `${API_URL}/v1/news?category=${categorySlug}&limit=3&per_page=4`,
-      { next: { revalidate: 60 } }
+      { next: { revalidate: 60, tags: ['news'] } }
     )
     const json = await res.json()
     const all: News[] = json?.data || []

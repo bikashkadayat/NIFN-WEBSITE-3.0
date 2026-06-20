@@ -44,8 +44,8 @@ const emptyForm = (): FormState => ({
 export default function DownloadCategoriesPage() {
   const [page, setPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
-  const [editingId, setEditingId] = useState<number | null>(null)
-  const [deleteId, setDeleteId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
   const [form, setForm] = useState<FormState>(emptyForm())
 
   const categoriesQuery = useDownloadCategories({ page })

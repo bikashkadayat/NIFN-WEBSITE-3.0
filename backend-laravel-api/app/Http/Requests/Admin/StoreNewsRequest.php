@@ -22,7 +22,7 @@ class StoreNewsRequest extends FormRequest
             'translations'             => ['required', 'array'],
             'translations.*.locale'    => ['required', 'string', 'size:2'],
             'translations.*.title'     => ['required', 'string', 'max:255'],
-            'translations.*.slug'      => ['required', 'string', 'max:255'],
+            'translations.*.slug'      => ['nullable', 'string', 'max:255'],
             'translations.*.excerpt'   => ['nullable', 'string'],
             'translations.*.body'      => ['nullable', 'string'],
             'translations.*.seo_title' => ['nullable', 'string', 'max:255'],

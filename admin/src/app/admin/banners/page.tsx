@@ -19,7 +19,7 @@ import { Card } from "@/components/ui/card"
 export default function BannersPage() {
   const router = useRouter()
   const [page, setPage] = useState(1)
-  const [deleteId, setDeleteId] = useState<number | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const { data, isLoading } = useBanners({ page })
   const deleteMutation = useDeleteBanner()
@@ -59,9 +59,9 @@ export default function BannersPage() {
       key: "thumbnail",
       label: "Thumbnail",
       render: (item) =>
-        item.background_image?.url ? (
+        item.image?.url ? (
           <img
-            src={item.background_image.url}
+            src={item.image.url}
             alt={getTitle(item.translations, "Banner")}
             className="h-10 w-16 rounded object-cover border border-zinc-200"
           />

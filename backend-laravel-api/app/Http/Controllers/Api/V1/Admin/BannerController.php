@@ -47,7 +47,7 @@ class BannerController extends Controller
             return $banner;
         });
 
-        RevalidationService::trigger('website', 'home-hero');
+        RevalidationService::trigger('website', 'banner');
 
         return response()->json([
             'data'    => $banner->load('translations'),
@@ -90,7 +90,7 @@ class BannerController extends Controller
             }
         });
 
-        RevalidationService::trigger('website', 'home-hero');
+        RevalidationService::trigger('website', 'banner');
 
         return response()->json([
             'data'    => $banner->fresh('translations'),
@@ -102,7 +102,7 @@ class BannerController extends Controller
     {
         Banner::findOrFail($id)->delete();
 
-        RevalidationService::trigger('website', 'home-hero');
+        RevalidationService::trigger('website', 'banner');
 
         return response()->json(['message' => 'Banner deleted.']);
     }

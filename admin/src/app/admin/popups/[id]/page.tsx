@@ -31,14 +31,13 @@ const typeOptions = [
   { value: "info", label: "Info" },
   { value: "warning", label: "Warning" },
   { value: "success", label: "Success" },
-  { value: "announcement", label: "Announcement" },
+  { value: "promotional", label: "Promotional" },
 ]
 
 const frequencyOptions = [
-  { value: "session", label: "Once per session" },
-  { value: "daily", label: "Once per day" },
+  { value: "once_session", label: "Once per session" },
+  { value: "once_day", label: "Once per day" },
   { value: "always", label: "Always" },
-  { value: "once", label: "Once ever" },
 ]
 
 export default function EditPopupPage() {
@@ -56,10 +55,10 @@ export default function EditPopupPage() {
   const [imageId, setImageId] = useState<string | null>(null)
   const [imageUrl, setImageUrl] = useState<string | undefined>()
   const [buttonLink, setButtonLink] = useState("")
-  const [type, setType] = useState<"info" | "warning" | "success" | "announcement">("info")
+  const [type, setType] = useState<"info" | "warning" | "success" | "promotional">("info")
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
-  const [displayFrequency, setDisplayFrequency] = useState<"session" | "daily" | "always" | "once">("session")
+  const [displayFrequency, setDisplayFrequency] = useState<"once_session" | "once_day" | "always">("once_session")
   const [isActive, setIsActive] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [initialized, setInitialized] = useState(false)
@@ -104,7 +103,7 @@ export default function EditPopupPage() {
     setSubmitting(true)
     try {
       await updatePopup.mutateAsync({
-        id: Number(id),
+        id: id,
         data: {
           type,
           button_link: buttonLink || null,
@@ -115,7 +114,7 @@ export default function EditPopupPage() {
           is_active: isActive,
           translations: [
             { locale: "en", ...translations.en },
-            { locale: "ne", ...translations.ne },
+            ...(translations.ne.title.trim() ? [{ locale: "ne", ...translations.ne }] : []),
           ],
         },
       })

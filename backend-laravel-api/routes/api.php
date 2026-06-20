@@ -62,16 +62,17 @@ Route::prefix('v1')->group(function () {
     // Search
     Route::get('/search', [SearchController::class, 'index']);
 
-    // Contact
+    // Contact & Join Network
     Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:contact');
+    Route::post('/join-network', [ContactController::class, 'joinNetwork'])->middleware('throttle:10,1');
 
     // Newsletter
     Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe']);
     Route::get('/newsletter/unsubscribe', [NewsletterController::class, 'unsubscribe']);
 
     // Developer registrations
-    Route::post('/developer-registrations', [DeveloperRegistrationController::class, 'store'])->middleware('throttle:5,1');
-    Route::post('/developer/register', [DeveloperRegistrationController::class, 'store'])->middleware('throttle:5,1');
+    Route::post('/developer-registrations', [DeveloperRegistrationController::class, 'store'])->middleware('throttle:20,1');
+    Route::post('/developer/register', [DeveloperRegistrationController::class, 'store'])->middleware('throttle:20,1');
 
     // Sitemap
     Route::get('/sitemap/news', [SitemapController::class, 'news']);
@@ -107,6 +108,7 @@ Route::prefix('v1/admin')->middleware('auth:sanctum')->group(function () {
     Route::get('galleries/{gallery}/images', [Admin\GalleryImageController::class, 'index']);
     Route::post('galleries/{gallery}/images', [Admin\GalleryImageController::class, 'store']);
     Route::post('galleries/{gallery}/images/reorder', [Admin\GalleryImageController::class, 'reorder']);
+    Route::put('galleries/{gallery}/images/{image}', [Admin\GalleryImageController::class, 'update']);
     Route::delete('galleries/{gallery}/images/{image}', [Admin\GalleryImageController::class, 'destroy']);
 
     // Banners

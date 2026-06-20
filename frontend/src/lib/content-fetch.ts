@@ -15,7 +15,9 @@ export interface ContentData {
 export async function fetchContent(slug: string, locale?: string): Promise<ContentData | null> {
   try {
     const params = locale ? `?locale=${locale}` : ''
-    const res = await fetch(`${API_URL}/v1/content/${slug}${params}`, { next: { revalidate: 60 } })
+    const res = await fetch(`${API_URL}/v1/content/${slug}${params}`, {
+      next: { revalidate: 60, tags: [`content`, `content-${slug}`] },
+    })
     if (!res.ok) return null
     const json = await res.json()
     return json?.data || null

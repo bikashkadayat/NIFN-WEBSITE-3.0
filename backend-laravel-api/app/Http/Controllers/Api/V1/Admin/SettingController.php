@@ -36,7 +36,7 @@ class SettingController extends Controller
             );
         }
 
-        RevalidationService::trigger('all');
+        RevalidationService::trigger('all', 'all');
 
         return response()->json(['message' => 'Settings updated.']);
     }
@@ -47,7 +47,7 @@ class SettingController extends Controller
 
         $setting->update(['value' => $request->value]);
 
-        RevalidationService::trigger('all');
+        RevalidationService::trigger('all', 'all');
 
         return response()->json(['data' => $setting, 'message' => 'Setting updated.']);
     }

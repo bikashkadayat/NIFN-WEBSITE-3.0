@@ -18,22 +18,19 @@ class Banner extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'id', 'image_id', 'mobile_image_id', 'button_text', 'button_url',
-        'button_target', 'sort_order', 'status', 'start_date', 'end_date',
+        'id', 'image_id', 'text_alignment', 'overlay_opacity',
+        'primary_button_link', 'secondary_button_link', 'sort_order', 'is_active',
     ];
 
     protected $casts = [
         'sort_order' => 'integer',
-        'status'     => 'boolean',
-        'start_date' => 'date',
-        'end_date'   => 'date',
+        'is_active'  => 'boolean',
+        'overlay_opacity' => 'integer',
     ];
-
-    public function getIsActiveAttribute(): bool { return (bool) $this->status; }
 
     public function scopeActive($query)
     {
-        return $query->where('status', true);
+        return $query->where('is_active', true);
     }
 
     public function translations(): HasMany

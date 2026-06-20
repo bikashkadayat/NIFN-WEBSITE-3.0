@@ -88,10 +88,10 @@ export const mediaApi = {
 export const contentsApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/contents', { params }),
-  get: (id: string | number) => apiGet<{ data: unknown }>(`/admin/contents/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/contents/${id}`),
   create: (data: unknown) => apiPost<{ data: unknown }>('/admin/contents', data),
-  update: (id: string | number, data: unknown) => apiPut<{ data: unknown }>(`/admin/contents/${id}`, data),
-  delete: (id: string | number) => apiDelete(`/admin/contents/${id}`),
+  update: (id: string, data: unknown) => apiPut<{ data: unknown }>(`/admin/contents/${id}`, data),
+  delete: (id: string) => apiDelete(`/admin/contents/${id}`),
 }
 
 // ─── News ─────────────────────────────────────────────────────────────────────
@@ -99,10 +99,10 @@ export const contentsApi = {
 export const newsApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/news', { params }),
-  get: (id: string | number) => apiGet<{ data: unknown }>(`/admin/news/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/news/${id}`),
   create: (data: unknown) => apiPost<{ data: unknown }>('/admin/news', data),
-  update: (id: string | number, data: unknown) => apiPut<{ data: unknown }>(`/admin/news/${id}`, data),
-  delete: (id: string | number) => apiDelete(`/admin/news/${id}`),
+  update: (id: string, data: unknown) => apiPut<{ data: unknown }>(`/admin/news/${id}`, data),
+  delete: (id: string) => apiDelete(`/admin/news/${id}`),
 }
 
 // ─── News Categories ─────────────────────────────────────────────────────────
@@ -110,10 +110,10 @@ export const newsApi = {
 export const newsCategoriesApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/news-categories', { params }),
-  get: (id: string | number) => apiGet<{ data: unknown }>(`/admin/news-categories/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/news-categories/${id}`),
   create: (data: unknown) => apiPost<{ data: unknown }>('/admin/news-categories', data),
-  update: (id: string | number, data: unknown) => apiPut<{ data: unknown }>(`/admin/news-categories/${id}`, data),
-  delete: (id: string | number) => apiDelete(`/admin/news-categories/${id}`),
+  update: (id: string, data: unknown) => apiPut<{ data: unknown }>(`/admin/news-categories/${id}`, data),
+  delete: (id: string) => apiDelete(`/admin/news-categories/${id}`),
 }
 
 // ─── Content Categories ───────────────────────────────────────────────────────
@@ -133,10 +133,10 @@ export const contentCategoriesApi = {
 export const tagsApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/tags', { params }),
-  get: (id: string | number) => apiGet<{ data: unknown }>(`/admin/tags/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/tags/${id}`),
   create: (data: unknown) => apiPost<{ data: unknown }>('/admin/tags', data),
-  update: (id: string | number, data: unknown) => apiPut<{ data: unknown }>(`/admin/tags/${id}`, data),
-  delete: (id: string | number) => apiDelete(`/admin/tags/${id}`),
+  update: (id: string, data: unknown) => apiPut<{ data: unknown }>(`/admin/tags/${id}`, data),
+  delete: (id: string) => apiDelete(`/admin/tags/${id}`),
 }
 
 // ─── Galleries ───────────────────────────────────────────────────────────────
@@ -144,21 +144,21 @@ export const tagsApi = {
 export const galleriesApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/galleries', { params }),
-  get: (id: string | number) => apiGet<{ data: unknown }>(`/admin/galleries/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/galleries/${id}`),
   create: (data: unknown) => apiPost<{ data: unknown }>('/admin/galleries', data),
-  update: (id: string | number, data: unknown) => apiPut<{ data: unknown }>(`/admin/galleries/${id}`, data),
-  delete: (id: string | number) => apiDelete(`/admin/galleries/${id}`),
-  getImages: (galleryId: string | number) =>
+  update: (id: string, data: unknown) => apiPut<{ data: unknown }>(`/admin/galleries/${id}`, data),
+  delete: (id: string) => apiDelete(`/admin/galleries/${id}`),
+  getImages: (galleryId: string) =>
     apiGet<{ data: unknown[] }>(`/admin/galleries/${galleryId}/images`),
-  uploadImages: (galleryId: string | number, formData: FormData) =>
+  uploadImages: (galleryId: string, formData: FormData) =>
     apiPost<{ data: unknown[] }>(`/admin/galleries/${galleryId}/images`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
-  reorderImages: (galleryId: string | number, order: { id: string | number; sort_order: number }[]) =>
+  reorderImages: (galleryId: string, order: { id: string; sort_order: number }[]) =>
     apiPost(`/admin/galleries/${galleryId}/images/reorder`, { order }),
-  deleteImage: (galleryId: string | number, imageId: string | number) =>
+  deleteImage: (galleryId: string, imageId: string) =>
     apiDelete(`/admin/galleries/${galleryId}/images/${imageId}`),
-  updateImage: (galleryId: string | number, imageId: string | number, data: unknown) =>
+  updateImage: (galleryId: string, imageId: string, data: unknown) =>
     apiPut(`/admin/galleries/${galleryId}/images/${imageId}`, data),
 }
 
@@ -167,10 +167,10 @@ export const galleriesApi = {
 export const bannersApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/banners', { params }),
-  get: (id: number) => apiGet<{ data: unknown }>(`/admin/banners/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/banners/${id}`),
   create: (data: unknown) => apiPost<{ data: unknown }>('/admin/banners', data),
-  update: (id: number, data: unknown) => apiPut<{ data: unknown }>(`/admin/banners/${id}`, data),
-  delete: (id: number) => apiDelete(`/admin/banners/${id}`),
+  update: (id: string, data: unknown) => apiPut<{ data: unknown }>(`/admin/banners/${id}`, data),
+  delete: (id: string) => apiDelete(`/admin/banners/${id}`),
 }
 
 // ─── Downloads ───────────────────────────────────────────────────────────────
@@ -178,16 +178,16 @@ export const bannersApi = {
 export const downloadsApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/downloads', { params }),
-  get: (id: number) => apiGet<{ data: unknown }>(`/admin/downloads/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/downloads/${id}`),
   create: (data: FormData | unknown) =>
     apiPost<{ data: unknown }>('/admin/downloads', data, {
       headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined,
     }),
-  update: (id: number, data: FormData | unknown) =>
+  update: (id: string, data: FormData | unknown) =>
     apiPost<{ data: unknown }>(`/admin/downloads/${id}?_method=PUT`, data, {
       headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined,
     }),
-  delete: (id: number) => apiDelete(`/admin/downloads/${id}`),
+  delete: (id: string) => apiDelete(`/admin/downloads/${id}`),
 }
 
 // ─── Download Categories ──────────────────────────────────────────────────────
@@ -195,11 +195,11 @@ export const downloadsApi = {
 export const downloadCategoriesApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/download-categories', { params }),
-  get: (id: number) => apiGet<{ data: unknown }>(`/admin/download-categories/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/download-categories/${id}`),
   create: (data: unknown) => apiPost<{ data: unknown }>('/admin/download-categories', data),
-  update: (id: number, data: unknown) =>
+  update: (id: string, data: unknown) =>
     apiPut<{ data: unknown }>(`/admin/download-categories/${id}`, data),
-  delete: (id: number) => apiDelete(`/admin/download-categories/${id}`),
+  delete: (id: string) => apiDelete(`/admin/download-categories/${id}`),
 }
 
 // ─── Popup Notices ───────────────────────────────────────────────────────────
@@ -207,11 +207,11 @@ export const downloadCategoriesApi = {
 export const popupNoticesApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/popup-notices', { params }),
-  get: (id: number) => apiGet<{ data: unknown }>(`/admin/popup-notices/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/popup-notices/${id}`),
   create: (data: unknown) => apiPost<{ data: unknown }>('/admin/popup-notices', data),
-  update: (id: number, data: unknown) =>
+  update: (id: string, data: unknown) =>
     apiPut<{ data: unknown }>(`/admin/popup-notices/${id}`, data),
-  delete: (id: number) => apiDelete(`/admin/popup-notices/${id}`),
+  delete: (id: string) => apiDelete(`/admin/popup-notices/${id}`),
 }
 
 // ─── Menus ───────────────────────────────────────────────────────────────────
@@ -219,16 +219,16 @@ export const popupNoticesApi = {
 export const menusApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[] }>('/admin/menus', { params }),
-  get: (id: number) => apiGet<{ data: unknown }>(`/admin/menus/${id}`),
-  getItems: (menuId: number) =>
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/menus/${id}`),
+  getItems: (menuId: string) =>
     apiGet<{ data: unknown[] }>(`/admin/menus/${menuId}/items`),
-  createItem: (menuId: number, data: unknown) =>
+  createItem: (menuId: string, data: unknown) =>
     apiPost<{ data: unknown }>(`/admin/menus/${menuId}/items`, data),
-  updateItem: (menuId: number, itemId: number, data: unknown) =>
+  updateItem: (menuId: string, itemId: string, data: unknown) =>
     apiPut<{ data: unknown }>(`/admin/menus/${menuId}/items/${itemId}`, data),
-  deleteItem: (menuId: number, itemId: number) =>
+  deleteItem: (menuId: string, itemId: string) =>
     apiDelete(`/admin/menus/${menuId}/items/${itemId}`),
-  reorderItems: (menuId: number, order: { id: number; sort_order: number; parent_id?: number | null }[]) =>
+  reorderItems: (menuId: string, order: { id: string; sort_order: number; parent_id?: string | null }[]) =>
     apiPost(`/admin/menus/${menuId}/items/reorder`, { order }),
 }
 
@@ -247,10 +247,10 @@ export const settingsApi = {
 export const usersApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/users', { params }),
-  get: (id: number) => apiGet<{ data: unknown }>(`/admin/users/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/users/${id}`),
   create: (data: unknown) => apiPost<{ data: unknown }>('/admin/users', data),
-  update: (id: number, data: unknown) => apiPut<{ data: unknown }>(`/admin/users/${id}`, data),
-  delete: (id: number) => apiDelete(`/admin/users/${id}`),
+  update: (id: string, data: unknown) => apiPut<{ data: unknown }>(`/admin/users/${id}`, data),
+  delete: (id: string) => apiDelete(`/admin/users/${id}`),
 }
 
 // ─── Contact Submissions ──────────────────────────────────────────────────────
@@ -258,9 +258,9 @@ export const usersApi = {
 export const contactSubmissionsApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/contact-submissions', { params }),
-  get: (id: number) => apiGet<{ data: unknown }>(`/admin/contact-submissions/${id}`),
-  markRead: (id: number) => apiPost(`/admin/contact-submissions/${id}/mark-read`),
-  delete: (id: number) => apiDelete(`/admin/contact-submissions/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/contact-submissions/${id}`),
+  markRead: (id: string) => apiPost(`/admin/contact-submissions/${id}/mark-read`),
+  delete: (id: string) => apiDelete(`/admin/contact-submissions/${id}`),
 }
 
 // ─── Newsletter Subscribers ───────────────────────────────────────────────────
@@ -269,8 +269,8 @@ export const newsletterApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/newsletter-subscribers', { params }),
   export: () => apiGet<Blob>('/admin/newsletter-subscribers/export', { responseType: 'blob' }),
-  unsubscribe: (id: number) => apiPost(`/admin/newsletter-subscribers/${id}/unsubscribe`),
-  delete: (id: number) => apiDelete(`/admin/newsletter-subscribers/${id}`),
+  unsubscribe: (id: string) => apiPost(`/admin/newsletter-subscribers/${id}/unsubscribe`),
+  delete: (id: string) => apiDelete(`/admin/newsletter-subscribers/${id}`),
 }
 
 // ─── Developer Registrations ──────────────────────────────────────────────────
@@ -294,7 +294,7 @@ export const developerRegistrationsApi = {
 export const activityLogsApi = {
   list: (params?: Record<string, unknown>) =>
     apiGet<{ data: unknown[]; meta?: unknown }>('/admin/activity-logs', { params }),
-  get: (id: number) => apiGet<{ data: unknown }>(`/admin/activity-logs/${id}`),
+  get: (id: string) => apiGet<{ data: unknown }>(`/admin/activity-logs/${id}`),
 }
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────

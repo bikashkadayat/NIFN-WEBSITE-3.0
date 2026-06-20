@@ -33,9 +33,9 @@ const textAlignOptions = [
 ]
 
 const overlayOptions = [
-  { value: "light", label: "Light (30%)" },
-  { value: "medium", label: "Medium (50%)" },
-  { value: "dark", label: "Dark (70%)" },
+  { value: "30", label: "Light (30%)" },
+  { value: "50", label: "Medium (50%)" },
+  { value: "70", label: "Dark (70%)" },
 ]
 
 export default function NewBannerPage() {
@@ -46,11 +46,11 @@ export default function NewBannerPage() {
     en: emptyTranslation(),
     ne: emptyTranslation(),
   })
-  const [backgroundImageId, setBackgroundImageId] = useState<string | null>(null)
+  const [imageId, setImageId] = useState<string | null>(null)
   const [primaryButtonLink, setPrimaryButtonLink] = useState("")
   const [secondaryButtonLink, setSecondaryButtonLink] = useState("")
-  const [textAlignment, setTextAlignment] = useState<"left" | "center" | "right">("left")
-  const [overlayOpacity, setOverlayOpacity] = useState<"light" | "medium" | "dark">("medium")
+  const [textAlignment, setTextAlignment] = useState<"left" | "center" | "right">("center")
+  const [overlayOpacity, setOverlayOpacity] = useState(50)
   const [sortOrder, setSortOrder] = useState(0)
   const [isActive, setIsActive] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -67,7 +67,7 @@ export default function NewBannerPage() {
     setSubmitting(true)
     try {
       await createBanner.mutateAsync({
-        background_image_id: backgroundImageId,
+        image_id: imageId,
         primary_button_link: primaryButtonLink || null,
         secondary_button_link: secondaryButtonLink || null,
         text_alignment: textAlignment,
@@ -106,8 +106,8 @@ export default function NewBannerPage() {
           </CardHeader>
           <CardContent>
             <ImageUpload
-              onChange={(id) => setBackgroundImageId(id)}
-              hint="Recommended: 1920×800px"
+              onChange={(id) => setImageId(id)}
+              hint="Recommended: 1920×800px. Shown as full-screen hero background."
             />
           </CardContent>
         </Card>
@@ -171,7 +171,7 @@ export default function NewBannerPage() {
               label="Primary Button Link"
               value={primaryButtonLink}
               onChange={(e) => setPrimaryButtonLink(e.target.value)}
-              placeholder="https://example.com"
+              placeholder="/about or https://example.com"
             />
           </CardContent>
         </Card>
@@ -186,7 +186,7 @@ export default function NewBannerPage() {
                 label="Button Text (English)"
                 value={translations.en.secondary_button_text}
                 onChange={(e) => updateTranslation("en", "secondary_button_text", e.target.value)}
-                placeholder="e.g. Contact Us"
+                placeholder="e.g. Join Network"
               />
               <Input
                 label="Button Text (Nepali)"
@@ -199,7 +199,7 @@ export default function NewBannerPage() {
               label="Secondary Button Link"
               value={secondaryButtonLink}
               onChange={(e) => setSecondaryButtonLink(e.target.value)}
-              placeholder="https://example.com"
+              placeholder="/join-network or https://example.com"
             />
           </CardContent>
         </Card>
@@ -217,10 +217,10 @@ export default function NewBannerPage() {
                 onChange={(e) => setTextAlignment(e.target.value as "left" | "center" | "right")}
               />
               <Select
-                label="Overlay Opacity"
+                label="Image Overlay Darkness"
                 options={overlayOptions}
-                value={overlayOpacity}
-                onChange={(e) => setOverlayOpacity(e.target.value as "light" | "medium" | "dark")}
+                value={String(overlayOpacity)}
+                onChange={(e) => setOverlayOpacity(Number(e.target.value))}
               />
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 items-end">
