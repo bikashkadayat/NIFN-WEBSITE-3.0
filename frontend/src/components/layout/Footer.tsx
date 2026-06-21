@@ -81,7 +81,7 @@ export async function Footer() {
   const quickLinks = footerMenu.filter((item) => item.url && item.title)
   const resourceLinks = [
     { title: 'Blog', href: '/news' },
-    { title: 'Documentation', href: process.env.NEXT_PUBLIC_DEVELOPER_PORTAL_URL || 'https://developers.nifn.org.np', external: true },
+    { title: 'Documentation', href: process.env.NEXT_PUBLIC_DEVELOPER_PORTAL_URL || 'http://localhost:3006/', external: true },
     { title: 'Media', href: '/gallery' },
     { title: 'Events', href: '/events' },
   ]

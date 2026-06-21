@@ -141,7 +141,8 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - NEXT_PUBLIC_API_URL=http://host.docker.internal:8000/api
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+      - API_INTERNAL_URL=http://backend:8000/api
       - NEXT_PUBLIC_SITE_URL=http://localhost:3006
       - NEXT_PUBLIC_MAIN_SITE_URL=http://localhost:3007
       - NEXT_PUBLIC_ADMIN_URL=http://localhost:3008

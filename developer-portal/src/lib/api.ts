@@ -1,4 +1,11 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
+// NEXT_PUBLIC_ vars are baked at build time (client-side bundle).
+// For server-side fetches inside Docker, use API_INTERNAL_URL (runtime env, not baked).
+const CLIENT_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
+const SERVER_API_URL = process.env.API_INTERNAL_URL || CLIENT_API_URL
+
+function getApiUrl(): string {
+  return typeof window === 'undefined' ? SERVER_API_URL : CLIENT_API_URL
+}
 
 export interface NavNode {
   id: string
@@ -76,7 +83,7 @@ async function fetchJson<T>(url: string, fallback: T): Promise<T> {
 }
 
 export async function fetchNavigation(): Promise<NavNode[]> {
-  return fetchJson<NavNode[]>(`${API_URL}/v1/developer/navigation`, [])
+  return fetchJson<NavNode[]>(`${getApiUrl()}/v1/developer/navigation`, [])
 }
 
 export async function getDeveloperNavigation(): Promise<NavNode[]> {
@@ -84,11 +91,11 @@ export async function getDeveloperNavigation(): Promise<NavNode[]> {
 }
 
 export async function getDeveloperPages(): Promise<DevPage[]> {
-  return fetchJson<DevPage[]>(`${API_URL}/v1/developer/pages`, [])
+  return fetchJson<DevPage[]>(`${getApiUrl()}/v1/developer/pages`, [])
 }
 
 export async function fetchDeveloperPage(slug: string): Promise<DevPage | null> {
-  return fetchJson<DevPage | null>(`${API_URL}/v1/developer/pages/${slug}`, null)
+  return fetchJson<DevPage | null>(`${getApiUrl()}/v1/developer/pages/${slug}`, null)
 }
 
 export async function getDeveloperPageBySlug(slug: string): Promise<DevPage | null> {
@@ -96,7 +103,7 @@ export async function getDeveloperPageBySlug(slug: string): Promise<DevPage | nu
 }
 
 export async function fetchDeveloperSettings(): Promise<Record<string, string>> {
-  return fetchJson<Record<string, string>>(`${API_URL}/v1/developer/settings`, {})
+  return fetchJson<Record<string, string>>(`${getApiUrl()}/v1/developer/settings`, {})
 }
 
 export async function getDeveloperSettings(): Promise<Record<string, string>> {
@@ -104,7 +111,7 @@ export async function getDeveloperSettings(): Promise<Record<string, string>> {
 }
 
 export async function fetchDeveloperSdks(): Promise<DevSdk[]> {
-  return fetchJson<DevSdk[]>(`${API_URL}/v1/developer/sdks`, [])
+  return fetchJson<DevSdk[]>(`${getApiUrl()}/v1/developer/sdks`, [])
 }
 
 export async function getDeveloperSdks(): Promise<DevSdk[]> {
@@ -112,7 +119,7 @@ export async function getDeveloperSdks(): Promise<DevSdk[]> {
 }
 
 export async function fetchDeveloperChangelog(): Promise<DevChangelogEntry[]> {
-  return fetchJson<DevChangelogEntry[]>(`${API_URL}/v1/developer/changelog`, [])
+  return fetchJson<DevChangelogEntry[]>(`${getApiUrl()}/v1/developer/changelog`, [])
 }
 
 export async function getDeveloperChangelog(): Promise<DevChangelogEntry[]> {
@@ -121,12 +128,12 @@ export async function getDeveloperChangelog(): Promise<DevChangelogEntry[]> {
 
 export async function searchDeveloperDocs(query: string): Promise<SearchResult[]> {
   if (!query.trim()) return []
-  return fetchJson<SearchResult[]>(`${API_URL}/v1/search?q=${encodeURIComponent(query)}&type=developer`, [])
+  return fetchJson<SearchResult[]>(`${getApiUrl()}/v1/search?q=${encodeURIComponent(query)}&type=developer`, [])
 }
 
 export async function submitDeveloperRegistration(data: RegistrationData): Promise<{ success: boolean; error?: string }> {
   try {
-    const res = await fetch(`${API_URL}/v1/developer-registrations`, {
+    const res = await fetch(`${getApiUrl()}/v1/developer-registrations`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
