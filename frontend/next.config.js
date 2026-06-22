@@ -9,6 +9,16 @@ const nextConfig = {
         port: '8000',
       },
       {
+        protocol: 'http',
+        hostname: 'host.docker.internal',
+        port: '8000',
+      },
+      {
+        protocol: 'http',
+        hostname: 'backend',
+        port: '8000',
+      },
+      {
         protocol: 'https',
         hostname: '**',
       },

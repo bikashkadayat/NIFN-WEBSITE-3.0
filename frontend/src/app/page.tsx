@@ -5,11 +5,12 @@ import { LatestNews } from '@/components/home/LatestNews'
 import { Partners } from '@/components/home/Partners'
 import { CallToAction } from '@/components/home/CallToAction'
 import { fetchContent } from '@/lib/content-fetch'
+import { fixImageUrl } from '@/lib/image-url'
 import type { Banner } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
+const API_URL = process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
 
 interface SettingMap {
   [key: string]: string | number | boolean
@@ -19,7 +20,10 @@ async function fetchBanners(): Promise<Banner[]> {
   try {
     const res = await fetch(`${API_URL}/v1/banners`, { next: { revalidate: 60, tags: ['banners'] } })
     const json = await res.json()
-    return json?.data || []
+    return (json?.data || []).map((b: Banner) => ({
+      ...b,
+      image_url: fixImageUrl(b.image_url),
+    }))
   } catch {
     return []
   }

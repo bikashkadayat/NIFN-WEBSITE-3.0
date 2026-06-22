@@ -4,11 +4,12 @@ import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { Breadcrumb } from '@/components/ui/Breadcrumb'
 import { GalleryGrid } from '@/components/gallery/GalleryGrid'
-import type { Gallery } from '@/types'
+import { fixImageUrl } from '@/lib/image-url'
+import type { Gallery, GalleryDetailImage } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
+const API_URL = process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
 
 interface GalleryDetailPageProps {
   params: { slug: string }
@@ -19,7 +20,15 @@ async function fetchGallery(slug: string): Promise<Gallery | null> {
     const res = await fetch(`${API_URL}/v1/galleries/${slug}`, { next: { revalidate: 60, tags: ['galleries', `gallery-${slug}`] } })
     if (!res.ok) return null
     const json = await res.json()
-    return json?.data || null
+    const gallery: Gallery = json?.data || null
+    if (gallery?.images) {
+      gallery.images = gallery.images.map((img: GalleryDetailImage) => ({
+        ...img,
+        url: fixImageUrl(img.url) ?? img.url,
+        thumbnail_url: fixImageUrl(img.thumbnail_url) ?? img.thumbnail_url,
+      }))
+    }
+    return gallery
   } catch {
     return null
   }
