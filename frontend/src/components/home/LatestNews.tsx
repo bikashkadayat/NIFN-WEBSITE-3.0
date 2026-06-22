@@ -11,6 +11,8 @@ interface NewsItem {
   slug?: string
   excerpt?: string
   featured_image_url?: string
+  is_featured?: boolean
+  is_breaking?: boolean
   category?: { id: string; name?: string; slug?: string }
   published_at?: string
 }
@@ -45,7 +47,7 @@ export function LatestNews({ news, sectionTitle }: LatestNewsProps) {
                 href={`/news/${item.slug || item.id}`}
                 className="block group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 h-full"
               >
-                <div className="aspect-video overflow-hidden">
+                <div className="aspect-video overflow-hidden relative">
                   {item.featured_image_url ? (
                     <img
                       src={item.featured_image_url}
@@ -55,13 +57,25 @@ export function LatestNews({ news, sectionTitle }: LatestNewsProps) {
                   ) : (
                     <PlaceholderImage className="w-full h-full" />
                   )}
-                </div>
-                <div className="p-5">
-                  {item.category?.name && (
-                    <span className="inline-block text-xs font-medium text-cyan-700 bg-cyan-50 px-2 py-1 rounded-full mb-3">
-                      {item.category.name}
+                  {item.is_breaking && (
+                    <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded">
+                      Breaking
                     </span>
                   )}
+                </div>
+                <div className="p-5">
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {item.is_featured && !item.is_breaking && (
+                      <span className="inline-block text-xs font-medium text-yellow-700 bg-yellow-50 px-2 py-1 rounded-full">
+                        Featured
+                      </span>
+                    )}
+                    {item.category?.name && (
+                      <span className="inline-block text-xs font-medium text-cyan-700 bg-cyan-50 px-2 py-1 rounded-full">
+                        {item.category.name}
+                      </span>
+                    )}
+                  </div>
                   <h3 className="font-bold text-gray-900 line-clamp-2 mb-2 group-hover:text-cyan-600 transition-colors">
                     {item.title}
                   </h3>

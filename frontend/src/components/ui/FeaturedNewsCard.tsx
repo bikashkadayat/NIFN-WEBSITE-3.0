@@ -11,9 +11,10 @@ interface FeaturedNewsCardProps {
 }
 
 export function FeaturedNewsCard({ news }: FeaturedNewsCardProps) {
-  const title = news.translations?.find(t => t.locale === 'en')?.title || news.title || ''
-  const excerpt = news.translations?.find(t => t.locale === 'en')?.excerpt || news.excerpt || ''
-  const slug = news.translations?.find(t => t.locale === 'en')?.slug || news.slug || ''
+  const title = news.title || ''
+  const excerpt = news.excerpt || ''
+  const slug = news.slug || news.id
+  const imageUrl = news.featured_image_url || news.featured_image?.url
 
   return (
     <div className="bg-cyan-50/50 rounded-2xl overflow-hidden border border-cyan-100">
@@ -40,9 +41,9 @@ export function FeaturedNewsCard({ news }: FeaturedNewsCardProps) {
           </Link>
         </div>
         <div className="md:w-[45%] lg:w-[40%] aspect-video md:aspect-auto">
-          {news.featured_image?.url ? (
+          {imageUrl ? (
             <img
-              src={news.featured_image.url}
+              src={imageUrl}
               alt={title}
               className="w-full h-full object-cover"
             />

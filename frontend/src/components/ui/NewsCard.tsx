@@ -12,29 +12,40 @@ interface NewsCardProps {
 }
 
 export function NewsCard({ news }: NewsCardProps) {
-  const title = news.translations?.find(t => t.locale === 'en')?.title || news.title || ''
-  const excerpt = news.translations?.find(t => t.locale === 'en')?.excerpt || news.excerpt || ''
-  const slug = news.translations?.find(t => t.locale === 'en')?.slug || news.slug || ''
-  const categoryName = news.category?.translations?.find(t => t.locale === 'en')?.name || news.category?.name || ''
+  const title = news.title || ''
+  const excerpt = news.excerpt || ''
+  const slug = news.slug || news.id
+  const categoryName = news.category?.name || ''
+  const imageUrl = news.featured_image_url || news.featured_image?.url
 
   return (
     <Link href={`/news/${slug}`} className="block group">
       <Card className="overflow-hidden h-full">
-        <div className="aspect-video overflow-hidden">
-          {news.featured_image?.url ? (
+        <div className="aspect-video overflow-hidden relative">
+          {imageUrl ? (
             <img
-              src={news.featured_image.url}
+              src={imageUrl}
               alt={title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
             <PlaceholderImage className="w-full h-full" />
           )}
+          {news.is_breaking && (
+            <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded">
+              Breaking
+            </span>
+          )}
         </div>
         <div className="p-5">
-          {categoryName && (
-            <Badge variant="primary" className="mb-3">{categoryName}</Badge>
-          )}
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {news.is_featured && !news.is_breaking && (
+              <Badge variant="warning">Featured</Badge>
+            )}
+            {categoryName && (
+              <Badge variant="primary">{categoryName}</Badge>
+            )}
+          </div>
           <h3 className="font-bold text-gray-900 line-clamp-2 mb-2 group-hover:text-cyan-600 transition-colors">
             {title}
           </h3>

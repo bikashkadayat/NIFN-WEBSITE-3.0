@@ -29,9 +29,10 @@ async function fetchBanners(): Promise<Banner[]> {
   }
 }
 
-async function fetchFeaturedNews(): Promise<any[]> {
+async function fetchLatestNews(): Promise<any[]> {
   try {
-    const res = await fetch(`${API_URL}/v1/news?featured=1&limit=3`, { next: { revalidate: 60, tags: ['news'] } })
+    const res = await fetch(`${API_URL}/v1/news?limit=3`, { cache: 'no-store' })
+    if (!res.ok) return []
     const json = await res.json()
     return json?.data || []
   } catch {
@@ -60,7 +61,7 @@ export default async function HomePage({ searchParams }: { searchParams: { local
   const locale = searchParams?.locale
   const [banners, featuredNews, heroContent, statsContent, featuresContent, ctaContent] = await Promise.all([
     fetchBanners(),
-    fetchFeaturedNews(),
+    fetchLatestNews(),
     fetchContent('home-hero', locale),
     fetchContent('home-stats', locale),
     fetchContent('home-features', locale),

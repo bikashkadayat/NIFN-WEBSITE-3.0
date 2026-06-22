@@ -32,17 +32,24 @@ interface NewsListPageProps {
 }
 
 async function fetchNews(params: URLSearchParams): Promise<{ data: News[]; meta: PaginationMeta }> {
+  const empty = { data: [], meta: { current_page: 1, last_page: 1, per_page: 9, total: 0 } }
   try {
-    const res = await fetch(`${API_URL}/v1/news?${params.toString()}`, { next: { revalidate: 60, tags: ["news"] } })
-    return res.json()
+    const res = await fetch(`${API_URL}/v1/news?${params.toString()}`, { cache: 'no-store' })
+    if (!res.ok) return empty
+    const json = await res.json()
+    return {
+      data: json?.data || [],
+      meta: json?.meta || empty.meta,
+    }
   } catch {
-    return { data: [], meta: { current_page: 1, last_page: 1, per_page: 9, total: 0 } }
+    return empty
   }
 }
 
 async function fetchCategories(): Promise<Category[]> {
   try {
-    const res = await fetch(`${API_URL}/v1/news/categories`, { next: { revalidate: 120, tags: ['news-categories'] } })
+    const res = await fetch(`${API_URL}/v1/news/categories`, { cache: 'no-store' })
+    if (!res.ok) return []
     const json = await res.json()
     return json?.data || []
   } catch {
@@ -132,9 +139,18 @@ export default async function NewsListPage({ searchParams }: NewsListPageProps) 
                 <div className="bg-cyan-50/50 rounded-2xl overflow-hidden border border-cyan-100">
                   <div className="flex flex-col md:flex-row">
                     <div className="flex-1 p-8 md:p-10 lg:p-12 flex flex-col justify-center">
-                      <Badge variant="primary" className="mb-4 w-fit">
-                        Latest
-                      </Badge>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {featuredArticle.is_breaking ? (
+                          <Badge variant="error">Breaking</Badge>
+                        ) : featuredArticle.is_featured ? (
+                          <Badge variant="warning">Featured</Badge>
+                        ) : (
+                          <Badge variant="primary">Latest</Badge>
+                        )}
+                        {featuredArticle.category?.name && (
+                          <Badge variant="default">{featuredArticle.category.name}</Badge>
+                        )}
+                      </div>
                       <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 leading-tight">
                         {featuredArticle.title}
                       </h2>
@@ -146,7 +162,7 @@ export default async function NewsListPage({ searchParams }: NewsListPageProps) 
                         Read Article <ArrowRight className="w-4 h-4" />
                       </span>
                     </div>
-                    <div className="md:w-[45%] lg:w-[40%] aspect-video md:aspect-auto">
+                    <div className="md:w-[45%] lg:w-[40%] aspect-video md:aspect-auto relative">
                       {featuredArticle.featured_image_url ? (
                         <img
                           src={featuredArticle.featured_image_url}
@@ -155,6 +171,11 @@ export default async function NewsListPage({ searchParams }: NewsListPageProps) 
                         />
                       ) : (
                         <PlaceholderImage className="w-full h-full" />
+                      )}
+                      {featuredArticle.is_breaking && (
+                        <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded">
+                          Breaking
+                        </span>
                       )}
                     </div>
                   </div>

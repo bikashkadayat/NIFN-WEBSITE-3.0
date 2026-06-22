@@ -14,7 +14,7 @@ class NewsResource extends JsonResource
     {
         $locale = $this->getLocale($request);
         $translation = $this->getTranslation($this->resource, $locale);
-        $isDetail = $request->routeIs('api.news.show') || $request->route()->getName() === 'api.news.show';
+        $isDetail = $request->routeIs('api.news.show');
 
         $data = [
             'id' => $this->id,
@@ -22,6 +22,8 @@ class NewsResource extends JsonResource
             'slug' => $translation?->slug,
             'excerpt' => $translation?->excerpt,
             'featured_image_url' => $this->featuredImage?->url,
+            'is_featured' => $this->is_featured,
+            'is_breaking' => $this->is_breaking,
             'category' => $this->whenLoaded('category', function () use ($locale) {
                 if (! $this->category) {
                     return null;

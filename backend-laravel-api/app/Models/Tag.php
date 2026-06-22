@@ -26,7 +26,7 @@ class Tag extends Model
 
     public function news(): BelongsToMany
     {
-        return $this->belongsToMany(News::class, 'news_tags', 'tag_id', 'news_id');
+        return $this->belongsToMany(News::class, 'news_tag', 'tag_id', 'news_id');
     }
 
     public function translation(string $locale = 'en'): ?TagTranslation

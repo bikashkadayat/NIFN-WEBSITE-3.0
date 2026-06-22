@@ -39,7 +39,7 @@ class NewsController extends Controller
 
     public function show(Request $request, string $slug)
     {
-        $news = News::with(['translations', 'category.translations', 'featuredImage'])
+        $news = News::with(['translations', 'category.translations', 'featuredImage', 'tags'])
             ->published()
             ->whereHas('translations', fn($q) => $q->where('slug', $slug))
             ->first();

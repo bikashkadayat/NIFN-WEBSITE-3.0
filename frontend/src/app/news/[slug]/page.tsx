@@ -19,7 +19,7 @@ interface NewsDetailPageProps {
 
 async function fetchNewsDetail(slug: string): Promise<News | null> {
   try {
-    const res = await fetch(`${API_URL}/v1/news/${slug}`, { next: { revalidate: 60, tags: ['news', `news-${slug}`] } })
+    const res = await fetch(`${API_URL}/v1/news/${slug}`, { cache: 'no-store' })
     if (!res.ok) return null
     const json = await res.json()
     return json?.data || null
@@ -31,9 +31,10 @@ async function fetchNewsDetail(slug: string): Promise<News | null> {
 async function fetchRelatedNews(categorySlug: string, currentId: string): Promise<News[]> {
   try {
     const res = await fetch(
-      `${API_URL}/v1/news?category=${categorySlug}&limit=3&per_page=4`,
-      { next: { revalidate: 60, tags: ['news'] } }
+      `${API_URL}/v1/news?category=${categorySlug}&limit=4`,
+      { cache: 'no-store' }
     )
+    if (!res.ok) return []
     const json = await res.json()
     const all: News[] = json?.data || []
     return all.filter((n) => n.id !== currentId).slice(0, 3)
@@ -107,11 +108,17 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
             ]}
             className="mb-6"
           />
-          {article.category && (
-            <Badge variant="primary" className="mb-4">
-              {article.category.name}
-            </Badge>
-          )}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {article.is_breaking && (
+              <Badge variant="error">Breaking</Badge>
+            )}
+            {article.is_featured && !article.is_breaking && (
+              <Badge variant="warning">Featured</Badge>
+            )}
+            {article.category?.name && (
+              <Badge variant="primary">{article.category.name}</Badge>
+            )}
+          </div>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-4 leading-tight">
             {article.title}
           </h1>

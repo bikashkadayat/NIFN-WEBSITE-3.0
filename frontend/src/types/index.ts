@@ -64,8 +64,8 @@ export interface NewsTranslation {
 export interface NewsCategory {
   id: string
   sort_order?: number
-  is_active: boolean
-  translations: NewsCategoryTranslation[]
+  is_active?: boolean
+  translations?: NewsCategoryTranslation[]
   name?: string
   slug?: string
   description?: string
@@ -84,7 +84,7 @@ export interface NewsCategoryTranslation {
 
 export interface Tag {
   id: string
-  translations: TagTranslation[]
+  translations?: TagTranslation[]
   name?: string
   slug?: string
   created_at?: string
@@ -108,11 +108,11 @@ export interface News {
   id: string
   category_id?: string
   featured_image_id?: string
-  is_published: boolean
-  is_featured: boolean
-  is_breaking: boolean
+  is_published?: boolean
+  is_featured?: boolean
+  is_breaking?: boolean
   published_at?: string
-  translations: NewsTranslation[]
+  translations?: NewsTranslation[]
   category?: NewsCategory
   tags?: Tag[]
   featured_image?: Media
