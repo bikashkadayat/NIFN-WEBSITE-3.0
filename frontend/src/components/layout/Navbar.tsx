@@ -31,7 +31,7 @@ const NAV_ITEMS: NavItem[] = [
   ]},
   { label: 'Ecosystem', href: '/ecosystem', children: [
     { label: 'Overview', href: '/ecosystem', desc: 'Explore the network' },
-    { label: 'Developer Portal', href: process.env.NEXT_PUBLIC_DEVELOPER_PORTAL_URL || 'http://localhost:3006/', external: true, desc: 'Build on NIFN' },
+    { label: 'Developer Portal', href: process.env.NEXT_PUBLIC_DEVELOPER_PORTAL_URL || 'http://localhost:3006', external: true, desc: 'Build on NIFN' },
     { label: 'Join Network', href: '/join-network', desc: 'Become a participant' },
   ]},
   { label: 'Impact', href: '/impact' },

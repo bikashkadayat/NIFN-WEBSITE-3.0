@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Select } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ImageUpload } from "@/components/ui/image-upload"
+import { MediaPicker } from "@/components/ui/media-picker"
 import { Spinner } from "@/components/ui/spinner"
 
 interface BannerTranslation {
@@ -153,7 +153,7 @@ export default function EditBannerPage() {
             <CardTitle>Background Image</CardTitle>
           </CardHeader>
           <CardContent>
-            <ImageUpload
+            <MediaPicker
               value={imageUrl}
               onChange={(id, url) => {
                 setImageId(id)

@@ -85,12 +85,15 @@ export default function DeveloperRegistrationsPage() {
   const sendCredentials = useSendDeveloperCredentials()
   const deleteRegistration = useDeleteDeveloperRegistration()
 
-  const rawData = (registrationsQuery?.data as unknown as AnyRecord)?.data ?? registrationsQuery?.data
-  const registrations = Array.isArray(rawData) ? (rawData as DeveloperRegistration[]) : []
-  const meta = (registrationsQuery?.data as unknown as AnyRecord) ?? {}
-  const currentPage = (meta.current_page as number) ?? 1
-  const lastPage = (meta.last_page as number) ?? 1
-  const total = (meta.total as number) ?? 0
+  // API returns { success, data: { current_page, data: [...], last_page, total } }
+  const outerData = (registrationsQuery?.data as unknown as AnyRecord)?.data ?? registrationsQuery?.data
+  const paginator = outerData as AnyRecord
+  const registrations = Array.isArray(paginator?.data)
+    ? (paginator.data as DeveloperRegistration[])
+    : Array.isArray(outerData) ? (outerData as DeveloperRegistration[]) : []
+  const currentPage = (paginator?.current_page as number) ?? 1
+  const lastPage = (paginator?.last_page as number) ?? 1
+  const total = (paginator?.total as number) ?? 0
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {

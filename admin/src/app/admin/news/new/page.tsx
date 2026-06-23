@@ -15,7 +15,7 @@ import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LocaleTabs } from "@/components/ui/locale-tabs"
 import { SlugInput } from "@/components/ui/slug-input"
-import { ImageUpload } from "@/components/ui/image-upload"
+import { MediaPicker } from "@/components/ui/media-picker"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 
 interface TranslationState {
@@ -329,7 +329,7 @@ export default function NewNewsPage() {
                 <CardTitle>Featured Image</CardTitle>
               </CardHeader>
               <CardContent>
-                <ImageUpload
+                <MediaPicker
                   onChange={(id) => setFeaturedImageId(id)}
                 />
               </CardContent>

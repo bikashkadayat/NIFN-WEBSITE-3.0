@@ -11,7 +11,7 @@ import { Select } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LocaleTabs } from "@/components/ui/locale-tabs"
-import { ImageUpload } from "@/components/ui/image-upload"
+import { MediaPicker } from "@/components/ui/media-picker"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { Spinner } from "@/components/ui/spinner"
 
@@ -188,7 +188,7 @@ export default function EditPopupPage() {
             <CardTitle>Image</CardTitle>
           </CardHeader>
           <CardContent>
-            <ImageUpload
+            <MediaPicker
               value={imageUrl}
               onChange={(id, url) => {
                 setImageId(id)

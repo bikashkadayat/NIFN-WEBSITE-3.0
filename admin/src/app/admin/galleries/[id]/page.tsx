@@ -15,7 +15,7 @@ import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LocaleTabs } from "@/components/ui/locale-tabs"
 import { SlugInput } from "@/components/ui/slug-input"
-import { ImageUpload } from "@/components/ui/image-upload"
+import { MediaPicker } from "@/components/ui/media-picker"
 import { Spinner } from "@/components/ui/spinner"
 
 export default function GalleryEditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -172,8 +172,8 @@ export default function GalleryEditPage({ params }: { params: Promise<{ id: stri
               <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                 Cover Image <span className="text-zinc-400 font-normal">(optional)</span>
               </label>
-              <ImageUpload
-                value={coverImageUrl ?? coverImageId}
+              <MediaPicker
+                value={coverImageUrl ?? undefined}
                 onChange={(mediaId, url) => {
                   setCoverImageId(mediaId)
                   setCoverImageUrl(url ?? null)

@@ -13,7 +13,7 @@ import { Select } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LocaleTabs } from "@/components/ui/locale-tabs"
-import { ImageUpload } from "@/components/ui/image-upload"
+import { MediaPicker } from "@/components/ui/media-picker"
 import { FileUpload } from "@/components/ui/file-upload"
 import { Spinner } from "@/components/ui/spinner"
 
@@ -201,7 +201,7 @@ export default function EditDownloadPage() {
               <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
                 Thumbnail
               </label>
-              <ImageUpload
+              <MediaPicker
                 value={thumbnailUrl}
                 onChange={(id, url) => {
                   setThumbnailId(id)

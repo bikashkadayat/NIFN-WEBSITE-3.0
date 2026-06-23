@@ -17,12 +17,17 @@ class DeveloperRegistration extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'name',
+        'contact_name',
         'email',
-        'organization',
-        'institution_type',
-        'message',
+        'organization_name',
+        'organization_type',
+        'use_case',
         'status',
+        'admin_notes',
+        'sandbox_credentials',
+        'is_read',
+        'read_at',
+        'credentials_sent_at',
     ];
 
     protected $attributes = [

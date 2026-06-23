@@ -17,25 +17,16 @@ class DeveloperRegistrationController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        // Accept both old field names and DB column names for compatibility
-        $request->merge([
-            'name' => $request->input('name') ?? $request->input('contact_name'),
-            'organization' => $request->input('organization') ?? $request->input('organization_name'),
-            'institution_type' => $request->input('institution_type') ?? $request->input('organization_type'),
-            'message' => $request->input('message') ?? $request->input('use_case'),
-        ]);
-
         $validated = $request->validate([
-            'name'             => ['required', 'string', 'max:255'],
-            'email'            => ['required', 'email', 'max:255'],
-            'organization'     => ['nullable', 'string', 'max:255'],
-            'institution_type' => ['required', 'string', 'max:100'],
-            'message'          => ['nullable', 'string', 'max:5000'],
-            'terms_accepted'   => ['sometimes', 'boolean'],
-            'agreed_terms'     => ['sometimes', 'boolean'],
+            'contact_name'      => ['required', 'string', 'max:255'],
+            'email'             => ['required', 'email', 'max:255'],
+            'organization_name' => ['nullable', 'string', 'max:255'],
+            'organization_type' => ['required', 'string', 'max:100'],
+            'use_case'          => ['nullable', 'string', 'max:5000'],
+            'agreed_terms'      => ['sometimes', 'boolean'],
         ]);
 
-        unset($validated['terms_accepted'], $validated['agreed_terms']);
+        unset($validated['agreed_terms']);
 
         try {
             $registration = DeveloperRegistration::create($validated);
@@ -93,7 +84,9 @@ class DeveloperRegistrationController extends Controller
     public function update(Request $request, string $id): JsonResponse
     {
         $validated = $request->validate([
-            'status' => ['sometimes', 'in:' . implode(',', self::STATUSES)],
+            'status'               => ['sometimes', 'in:' . implode(',', self::STATUSES)],
+            'admin_notes'          => ['sometimes', 'nullable', 'string'],
+            'sandbox_credentials'  => ['sometimes', 'nullable', 'string'],
         ]);
 
         $registration = DeveloperRegistration::findOrFail($id);

@@ -16,7 +16,7 @@ import { Select } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { LocaleTabs } from '@/components/ui/locale-tabs'
 import { SlugInput } from '@/components/ui/slug-input'
-import { ImageUpload } from '@/components/ui/image-upload'
+import { MediaPicker } from '@/components/ui/media-picker'
 import { RichTextEditor } from '@/components/ui/rich-text-editor'
 
 const emptyLocale = () => ({
@@ -188,8 +188,7 @@ export default function ContentCreatePage() {
         <Card>
           <CardHeader><CardTitle>Featured Image</CardTitle></CardHeader>
           <CardContent>
-            <ImageUpload
-              value={null}
+            <MediaPicker
               onChange={(id) => setFeaturedImageId(id)}
               hint="Recommended: 1200×630px"
             />

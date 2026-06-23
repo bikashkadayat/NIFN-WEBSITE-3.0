@@ -13,7 +13,7 @@ import { Select } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { LocaleTabs } from '@/components/ui/locale-tabs'
 import { SlugInput } from '@/components/ui/slug-input'
-import { ImageUpload } from '@/components/ui/image-upload'
+import { MediaPicker } from '@/components/ui/media-picker'
 import { RichTextEditor } from '@/components/ui/rich-text-editor'
 import { Spinner } from '@/components/ui/spinner'
 import { toast } from 'sonner'
@@ -140,7 +140,7 @@ export default function ContentEditPage() {
         <Card>
           <CardHeader><CardTitle>Featured Image</CardTitle></CardHeader>
           <CardContent>
-            <ImageUpload value={featuredImageUrl} onChange={(id, url) => { setFeaturedImageId(id); setFeaturedImageUrl(url ?? null) }} hint="Recommended: 1200×630px" />
+            <MediaPicker value={featuredImageUrl ?? undefined} onChange={(id, url) => { setFeaturedImageId(id); setFeaturedImageUrl(url ?? null) }} hint="Recommended: 1200×630px" />
           </CardContent>
         </Card>
         <div className="flex gap-3">

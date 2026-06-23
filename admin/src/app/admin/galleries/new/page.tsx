@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LocaleTabs } from "@/components/ui/locale-tabs"
 import { SlugInput } from "@/components/ui/slug-input"
-import { ImageUpload } from "@/components/ui/image-upload"
+import { MediaPicker } from "@/components/ui/media-picker"
 
 export default function GalleryNewPage() {
   const router = useRouter()
@@ -22,6 +22,7 @@ export default function GalleryNewPage() {
   const [isPublished, setIsPublished] = useState(false)
   const [eventDate, setEventDate] = useState("")
   const [coverImageId, setCoverImageId] = useState<string | null>(null)
+  const [coverImageUrl, setCoverImageUrl] = useState<string | undefined>()
   const [translations, setTranslations] = useState<Record<Locale, { title: string; description: string }>>({
     en: { title: "", description: "" },
     ne: { title: "", description: "" },
@@ -127,9 +128,9 @@ export default function GalleryNewPage() {
               <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                 Cover Image <span className="text-zinc-400 font-normal">(optional)</span>
               </label>
-              <ImageUpload
-                value={coverImageId}
-                onChange={(id) => setCoverImageId(id)}
+              <MediaPicker
+                value={coverImageUrl}
+                onChange={(id, url) => { setCoverImageId(id); setCoverImageUrl(url) }}
                 hint="Gallery cover image"
               />
             </div>
